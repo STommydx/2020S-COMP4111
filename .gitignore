@@ -135,3 +135,12 @@ gradle-app.setting
 **/build/
 
 # End of https://www.gitignore.io/api/java,gradle,intellij
+
+# Created by https://www.gitignore.io/api/infer
+# Edit at https://www.gitignore.io/?templates=infer
+
+### infer ###
+# infer- http://fbinfer.com/
+infer-out
+
+# End of https://www.gitignore.io/api/infer
