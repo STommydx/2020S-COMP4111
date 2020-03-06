@@ -7,8 +7,10 @@ import org.apache.http.HttpStatus;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.http.impl.nio.bootstrap.HttpServer;
+import org.apache.http.impl.nio.bootstrap.ServerBootstrap;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
+import org.apache.http.nio.protocol.*;
 import org.apache.http.protocol.*;
 
 import java.io.IOException;
@@ -27,7 +29,19 @@ public class Main {
                 .add(new ResponseConnControl())
                 .build();
 
-        HttpRequestHandler myRequestHandler = new HttpRequestHandler() {
+        HttpAsyncRequestHandler<HttpRequest> myRequestHandler = new HttpAsyncRequestHandler<HttpRequest>() {
+
+            @Override
+            public HttpAsyncRequestConsumer<HttpRequest> processRequest(HttpRequest request, HttpContext context) throws HttpException, IOException {
+                return new BasicAsyncRequestConsumer();
+            }
+
+            @Override
+            public void handle(HttpRequest data, HttpAsyncExchange httpExchange, HttpContext context) throws HttpException, IOException {
+                HttpResponse response = httpExchange.getResponse();
+                handle(data, response, context);
+                httpExchange.submitResponse(new BasicAsyncResponseProducer(response));
+            }
 
             public void handle(
                     HttpRequest request,
@@ -41,14 +55,14 @@ public class Main {
 
         };
 
-        SocketConfig socketConfig = SocketConfig.custom()
+        IOReactorConfig socketConfig = IOReactorConfig.custom()
                 .setSoTimeout(15000)
                 .setTcpNoDelay(true)
                 .build();
         final HttpServer server = ServerBootstrap.bootstrap()
                 .setListenerPort(8080)
                 .setHttpProcessor(httpproc)
-                .setSocketConfig(socketConfig)
+                .setIOReactorConfig(socketConfig)
                 .registerHandler("*", myRequestHandler)
                 .create();
         server.start();
