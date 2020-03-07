@@ -1,10 +1,8 @@
 package hk.ust.cse.comp4111;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.config.SocketConfig;
+import hk.ust.cse.comp4111.handler.LoginRequestHandler;
+import hk.ust.cse.comp4111.handler.LogoutRequestHandler;
+import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.nio.bootstrap.HttpServer;
@@ -55,6 +53,9 @@ public class Main {
 
         };
 
+        HttpAsyncRequestHandler<?> loginHandler = new LoginRequestHandler();
+        HttpAsyncRequestHandler<?> logoutHandler = new LogoutRequestHandler();
+
         IOReactorConfig socketConfig = IOReactorConfig.custom()
                 .setSoTimeout(15000)
                 .setTcpNoDelay(true)
@@ -63,7 +64,10 @@ public class Main {
                 .setListenerPort(8080)
                 .setHttpProcessor(httpproc)
                 .setIOReactorConfig(socketConfig)
+                .registerHandler("/BookManagementService/login", loginHandler)
+                .registerHandler("/BookManagementService/logout", logoutHandler)
                 .registerHandler("*", myRequestHandler)
+                .setExceptionLogger(ExceptionLogger.STD_ERR)
                 .create();
         server.start();
         server.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
@@ -71,7 +75,7 @@ public class Main {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                server.shutdown(5, TimeUnit.SECONDS);
+                server.shutdown(1, TimeUnit.SECONDS);
             }
         });
     }
