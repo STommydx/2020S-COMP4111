@@ -16,7 +16,7 @@ import java.util.Map;
 
 public abstract class ServerRequestHandler extends BasicRequestHandler {
     @Override
-    public void handle(HttpRequest data, HttpResponse response, HttpContext context) throws HttpException, IOException {
+    public void handle(HttpRequest data, HttpResponse response, HttpContext context) throws IOException {
         RequestLine requestLine = data.getRequestLine();
         String httpMethod = requestLine.getMethod();
         URI uri = URI.create(data.getRequestLine().getUri());
