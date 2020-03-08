@@ -16,8 +16,6 @@ public class DatabaseUser {
             statement.setString(2, password);
             resultSet = statement.executeQuery();
             if (resultSet.next()) result = true;
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             if (resultSet != null) resultSet.close();
             if (statement != null) statement.close();
