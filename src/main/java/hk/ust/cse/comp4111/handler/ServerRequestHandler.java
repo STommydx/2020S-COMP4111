@@ -37,7 +37,7 @@ public abstract class ServerRequestHandler extends BasicRequestHandler {
         InputStream requestBody = null;
         if (data instanceof HttpEntityEnclosingRequest) {
             HttpEntity entity = ((HttpEntityEnclosingRequest) data).getEntity();
-            requestBody = entity.getContent();
+            if (entity.getContentLength() > 0) requestBody = entity.getContent();
         }
 
         try {

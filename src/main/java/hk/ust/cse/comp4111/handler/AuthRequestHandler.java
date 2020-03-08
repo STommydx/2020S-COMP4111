@@ -1,6 +1,8 @@
 package hk.ust.cse.comp4111.handler;
 
+import hk.ust.cse.comp4111.auth.AuthService;
 import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.TokenNotFoundException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +26,12 @@ public class AuthRequestHandler extends ServerRequestHandler {
         if (token == null) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         } else {
-            // TODO: add auth here
+            try {
+                AuthService.getInstance().getUser(token);
+            } catch (TokenNotFoundException e) {
+                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                return;
+            }
             requestHandler.handle(httpMethod, path, param, requestBody, response);
         }
     }
