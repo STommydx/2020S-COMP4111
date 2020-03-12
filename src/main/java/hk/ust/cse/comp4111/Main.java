@@ -54,6 +54,7 @@ public class Main {
 
         HttpAsyncRequestHandler<?> loginHandler = new LoginRequestHandler();
         HttpAsyncRequestHandler<?> logoutHandler = new LogoutRequestHandler();
+        HttpAsyncRequestHandler<?> addBookHandler = new AddBookRequestHandler();
         MultiRequestHandler transactionHandler = new MultiRequestHandler();
         transactionHandler.registerPostHandler(new TransactionPostRequestHandler());
         transactionHandler.registerPutHandler(new TransactionActionRequestHandler());
@@ -69,6 +70,7 @@ public class Main {
                 .setIOReactorConfig(socketConfig)
                 .registerHandler("/BookManagementService/login", loginHandler)
                 .registerHandler("/BookManagementService/logout", logoutHandler)
+                .registerHandler("/BookManagementService/books", addBookHandler)
                 .registerHandler("/BookManagementService/transaction", authTransactionHandler)
                 .registerHandler("*", myRequestHandler)
                 .setExceptionLogger(ExceptionLogger.STD_ERR)
