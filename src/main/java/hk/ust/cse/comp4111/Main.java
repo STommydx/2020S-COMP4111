@@ -1,7 +1,6 @@
 package hk.ust.cse.comp4111;
 
-import hk.ust.cse.comp4111.handler.LoginRequestHandler;
-import hk.ust.cse.comp4111.handler.LogoutRequestHandler;
+import hk.ust.cse.comp4111.handler.*;
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -55,6 +54,10 @@ public class Main {
 
         HttpAsyncRequestHandler<?> loginHandler = new LoginRequestHandler();
         HttpAsyncRequestHandler<?> logoutHandler = new LogoutRequestHandler();
+        MultiRequestHandler transactionHandler = new MultiRequestHandler();
+        transactionHandler.registerPostHandler(new TransactionPostRequestHandler());
+        transactionHandler.registerPutHandler(new TransactionActionRequestHandler());
+        HttpAsyncRequestHandler<?> authTransactionHandler = new AuthRequestHandler(transactionHandler);
 
         IOReactorConfig socketConfig = IOReactorConfig.custom()
                 .setSoTimeout(15000)
@@ -66,6 +69,7 @@ public class Main {
                 .setIOReactorConfig(socketConfig)
                 .registerHandler("/BookManagementService/login", loginHandler)
                 .registerHandler("/BookManagementService/logout", logoutHandler)
+                .registerHandler("/BookManagementService/transaction", authTransactionHandler)
                 .registerHandler("*", myRequestHandler)
                 .setExceptionLogger(ExceptionLogger.STD_ERR)
                 .create();
