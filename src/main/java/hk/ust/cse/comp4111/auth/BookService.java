@@ -3,9 +3,12 @@ package hk.ust.cse.comp4111.auth;
 import hk.ust.cse.comp4111.database.ConnectionManager;
 import hk.ust.cse.comp4111.database.DatabaseBook;
 import hk.ust.cse.comp4111.exception.BookExistException;
+import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
+import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
@@ -54,6 +57,46 @@ public class BookService {
 
         return id;
     }
+
+    public void BookPutRequest(BookPutRequest request, int id) throws InternalServerException,BookNotExistException, BookInvalidStatusException {
+        available = request.isAvaliable();
+        try (Connection connection = ConnectionManager.getConnection()) {
+            boolean curAvailabilty = DatabaseBook.curAvailablity(connection, id);
+            if (available == false && curAvailabilty == false) {
+                throw new BookInvalidStatusException();
+            }
+            else if(available == true && curAvailabilty == true){
+                    throw new BookInvalidStatusException();
+            }
+            else{
+                PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?");
+                statement.setBoolean(1, available);
+                statement.setInt(2, id);
+                statement.execute();
+                statement.close();
+
+                }
+        } catch (SQLException e){
+
+        }
+    }
+
+    public void BookDeleteRequest(int id) throws BookNotExistException{
+        try (Connection connection = ConnectionManager.getConnection()) {
+            boolean bookExist = DatabaseBook.bookExistByID(connection, id);
+            if(bookExist==true){
+                PreparedStatement statement = connection.prepareStatement("DELETE FROM books WHERE id = ?");
+                statement.setInt(1, id);
+                statement.execute();
+                statement.close();
+            }
+            else{
+                throw new BookNotExistException();
+            }
+        } catch (SQLException e) {
+        }
+    }
+
 
     public int getId() {
         return id;

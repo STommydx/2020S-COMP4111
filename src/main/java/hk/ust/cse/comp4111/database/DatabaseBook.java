@@ -1,5 +1,8 @@
 package hk.ust.cse.comp4111.database;
 
+import hk.ust.cse.comp4111.exception.BookExistException;
+import hk.ust.cse.comp4111.exception.BookNotExistException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +22,8 @@ public class DatabaseBook {
         DatabaseBook.id = id;
     }
 
+
+
     public static boolean bookExist(Connection connection, String title, String author, String publisher, int year) throws SQLException{
         boolean exist = false;
         try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE title = ? AND author = ? AND publisher = ? AND year = ?")) {
@@ -35,16 +40,34 @@ public class DatabaseBook {
             }
         }
         return exist;
-
-
-
     }
 
 
+    public static boolean curAvailablity(Connection connection,int id) throws SQLException, BookNotExistException{
+        try (PreparedStatement statement = connection.prepareStatement("SELECT id, available FROM books WHERE id = ?")) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getBoolean(2);
+            } else {
+                throw new BookNotExistException();
+            }
+        }
 
+    }
 
+    public static boolean bookExistByID(Connection connection,int id) throws SQLException, BookNotExistException{
+        try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE id = ?")) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            } else {
+                throw new BookNotExistException();
+            }
+        }
 
-
+    }
 
 
 }

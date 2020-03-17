@@ -27,6 +27,7 @@ public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest>{
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;
         }
+
         try {
             int id = BookService.getInstance().addBook(requestBody);
             response.setStatusCode(HttpStatus.SC_CREATED);

@@ -1,5 +1,6 @@
 package hk.ust.cse.comp4111;
 
+import hk.ust.cse.comp4111.auth.BookPutRequest;
 import hk.ust.cse.comp4111.handler.*;
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
@@ -54,11 +55,20 @@ public class Main {
 
         HttpAsyncRequestHandler<?> loginHandler = new LoginRequestHandler();
         HttpAsyncRequestHandler<?> logoutHandler = new LogoutRequestHandler();
-        HttpAsyncRequestHandler<?> addBookHandler = new AddBookRequestHandler();
         MultiRequestHandler transactionHandler = new MultiRequestHandler();
         transactionHandler.registerPostHandler(new TransactionPostRequestHandler());
         transactionHandler.registerPutHandler(new TransactionActionRequestHandler());
         HttpAsyncRequestHandler<?> authTransactionHandler = new AuthRequestHandler(transactionHandler);
+
+
+        AddBookRequestHandler addBookHandler = new AddBookRequestHandler();
+        HttpAsyncRequestHandler<?> authAddBookHandler = new AuthRequestHandler(addBookHandler);
+
+        MultiRequestHandler bookRequestHandler = new MultiRequestHandler();
+        bookRequestHandler.registerPutHandler(new BookPutRequestHandler());
+        bookRequestHandler.registerDeleteHandler(new BookDeleteRequestHandler());
+        HttpAsyncRequestHandler<?> authBookRequestHandler = new AuthRequestHandler(bookRequestHandler);
+
 
         IOReactorConfig socketConfig = IOReactorConfig.custom()
                 .setSoTimeout(15000)
@@ -70,7 +80,8 @@ public class Main {
                 .setIOReactorConfig(socketConfig)
                 .registerHandler("/BookManagementService/login", loginHandler)
                 .registerHandler("/BookManagementService/logout", logoutHandler)
-                .registerHandler("/BookManagementService/books", addBookHandler)
+                .registerHandler("/BookManagementService/books", authAddBookHandler)
+                .registerHandler("/BookManagementService/books/*", authBookRequestHandler)
                 .registerHandler("/BookManagementService/transaction", authTransactionHandler)
                 .registerHandler("*", myRequestHandler)
                 .setExceptionLogger(ExceptionLogger.STD_ERR)

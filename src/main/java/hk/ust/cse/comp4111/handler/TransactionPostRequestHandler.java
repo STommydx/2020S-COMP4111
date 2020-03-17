@@ -21,7 +21,4 @@ public class TransactionPostRequestHandler extends ServerRequestHandler {
             commitRequestHandler.handle(httpMethod, path, param, requestBody, response);
         }
     }
-
-
-
 }
