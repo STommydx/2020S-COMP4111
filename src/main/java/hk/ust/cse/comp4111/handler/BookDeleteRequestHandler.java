@@ -1,7 +1,7 @@
 package hk.ust.cse.comp4111.handler;
 
 
-import hk.ust.cse.comp4111.auth.BookService;
+import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.HttpResponse;

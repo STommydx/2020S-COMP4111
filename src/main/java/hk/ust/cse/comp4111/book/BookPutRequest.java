@@ -1,4 +1,4 @@
-package hk.ust.cse.comp4111.auth;
+package hk.ust.cse.comp4111.book;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

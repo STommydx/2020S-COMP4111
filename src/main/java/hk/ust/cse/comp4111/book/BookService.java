@@ -1,4 +1,4 @@
-package hk.ust.cse.comp4111.auth;
+package hk.ust.cse.comp4111.book;
 
 import hk.ust.cse.comp4111.database.ConnectionManager;
 import hk.ust.cse.comp4111.database.DatabaseBook;

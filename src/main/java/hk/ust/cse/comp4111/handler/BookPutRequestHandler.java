@@ -1,8 +1,8 @@
 package hk.ust.cse.comp4111.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hk.ust.cse.comp4111.auth.BookPutRequest;
-import hk.ust.cse.comp4111.auth.BookService;
+import hk.ust.cse.comp4111.book.BookPutRequest;
+import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
