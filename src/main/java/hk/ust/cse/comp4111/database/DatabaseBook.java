@@ -54,7 +54,7 @@ public class DatabaseBook {
     }
 
 
-    public static int addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
+    public static boolean addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher,year) VALUES (?,?,?,?)")) {
             statement.setString(1, title);
             statement.setString(2, author);
@@ -62,9 +62,14 @@ public class DatabaseBook {
             statement.setInt(4, year);
 
             statement.execute();
-            statement.close();
 
-            return bookExist(connection, title, author, publisher, year);
+            return false;
+        } catch (SQLException e) {
+            if (e.getSQLState().startsWith("23")) {
+                // duplicate book found, violates integrity constraint
+                return true;
+            }
+            throw e;
         }
     }
 

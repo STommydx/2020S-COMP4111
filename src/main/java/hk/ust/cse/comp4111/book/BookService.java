@@ -25,11 +25,12 @@ public class BookService {
         int year = request.getYear();
 
         try (Connection connection = ConnectionManager.getConnection()) {
-            int exist = DatabaseBook.bookExist(connection, title, author, publisher, year);
-            if (exist != -1) {
-                throw new BookExistException(exist);
+            boolean exist = DatabaseBook.addBookRecord(connection, title, author, publisher, year);
+            int id = DatabaseBook.bookExist(connection, title, author, publisher, year); // the two queries is not necessarily required to be atomic
+            if (exist) {
+                throw new BookExistException(id);
             } else {
-                return DatabaseBook.addBookRecord(connection, title, author, publisher, year);
+                return id;
             }
         } catch (SQLException e) {
             throw new InternalServerException(e);
