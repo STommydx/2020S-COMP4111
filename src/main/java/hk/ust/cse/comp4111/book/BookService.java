@@ -55,10 +55,8 @@ public class BookService {
 
     public void deleteBook(int id) throws BookNotExistException, InternalServerException {
         try (Connection connection = ConnectionManager.getConnection()) {
-            boolean bookExist = DatabaseBook.bookExistByID(connection, id);
-            if (bookExist) {
-                DatabaseBook.deleteBook(connection, id);
-            } else {
+            boolean bookExist = DatabaseBook.deleteBook(connection, id);
+            if (!bookExist) {
                 throw new BookNotExistException();
             }
         } catch (SQLException e) {

@@ -76,10 +76,11 @@ public class DatabaseBook {
         statement.close();
     }
 
-    public static void deleteBook(@NotNull Connection connection, int id) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM books WHERE id = ?");
-        statement.setInt(1, id);
-        statement.execute();
-        statement.close();
+    public static boolean deleteBook(@NotNull Connection connection, int id) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM books WHERE id = ?")) {
+            statement.setInt(1, id);
+            int count = statement.executeUpdate();
+            return count > 0;
+        }
     }
 }
