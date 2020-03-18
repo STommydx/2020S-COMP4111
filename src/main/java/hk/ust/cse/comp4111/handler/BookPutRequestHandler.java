@@ -32,7 +32,7 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
         String idFromURL = temp[0];
 
         try {
-            BookService.getInstance().BookPutRequest(requestBody, Integer.parseInt(idFromURL));
+            BookService.getInstance().putBook(requestBody, Integer.parseInt(idFromURL));
         } catch (BookNotExistException e) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             response.setReasonPhrase("No book record");

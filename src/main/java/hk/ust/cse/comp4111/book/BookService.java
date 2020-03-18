@@ -37,13 +37,13 @@ public class BookService {
 
     }
 
-    public void BookPutRequest(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
+    public void putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
         boolean available = request.isAvaliable();
         try (Connection connection = ConnectionManager.getConnection()) {
-            boolean curAvailabilty = DatabaseBook.curAvailablity(connection, id);
-            if (available == false && curAvailabilty == false) {
+            boolean curAvailability = DatabaseBook.curAvailability(connection, id);
+            if (!available && !curAvailability) {
                 throw new BookInvalidStatusException();
-            } else if (available == true && curAvailabilty == true) {
+            } else if (available && curAvailability) {
                 throw new BookInvalidStatusException();
             } else {
                 DatabaseBook.updateBookAvailability(connection, id, available);
@@ -53,10 +53,10 @@ public class BookService {
         }
     }
 
-    public void BookDeleteRequest(int id) throws BookNotExistException {
+    public void deleteBook(int id) throws BookNotExistException {
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean bookExist = DatabaseBook.bookExistByID(connection, id);
-            if (bookExist == true) {
+            if (bookExist) {
                 DatabaseBook.deleteBook(connection, id);
             } else {
                 throw new BookNotExistException();
