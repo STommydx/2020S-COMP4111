@@ -8,7 +8,6 @@ import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class BookService {
@@ -30,26 +29,12 @@ public class BookService {
             if (exist != -1) {
                 throw new BookExistException(exist);
             } else {
-                return addBookRecord(connection, title, author, publisher, year);
+                return DatabaseBook.addBookRecord(connection, title, author, publisher, year);
             }
         } catch (SQLException e) {
             throw new InternalServerException(e);
         }
 
-    }
-
-    private int addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher,year) VALUES (?,?,?,?)")) {
-            statement.setString(1, title);
-            statement.setString(2, author);
-            statement.setString(3, publisher);
-            statement.setInt(4, year);
-
-            statement.execute();
-            statement.close();
-
-            return DatabaseBook.bookExist(connection, title, author, publisher, year);
-        }
     }
 
     public void BookPutRequest(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
@@ -61,38 +46,23 @@ public class BookService {
             } else if (available == true && curAvailabilty == true) {
                 throw new BookInvalidStatusException();
             } else {
-                updateBookAvailability(connection, id, available);
+                DatabaseBook.updateBookAvailability(connection, id, available);
             }
         } catch (SQLException e) {
 
         }
-    }
-
-    private void updateBookAvailability(Connection connection, int id, boolean available) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?");
-        statement.setBoolean(1, available);
-        statement.setInt(2, id);
-        statement.execute();
-        statement.close();
     }
 
     public void BookDeleteRequest(int id) throws BookNotExistException {
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean bookExist = DatabaseBook.bookExistByID(connection, id);
             if (bookExist == true) {
-                deleteBook(connection, id);
+                DatabaseBook.deleteBook(connection, id);
             } else {
                 throw new BookNotExistException();
             }
         } catch (SQLException e) {
         }
-    }
-
-    private void deleteBook(Connection connection, int id) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM books WHERE id = ?");
-        statement.setInt(1, id);
-        statement.execute();
-        statement.close();
     }
 
 

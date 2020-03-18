@@ -1,6 +1,7 @@
 package hk.ust.cse.comp4111.database;
 
 import hk.ust.cse.comp4111.exception.BookNotExistException;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,4 +54,32 @@ public class DatabaseBook {
     }
 
 
+    public static int addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher,year) VALUES (?,?,?,?)")) {
+            statement.setString(1, title);
+            statement.setString(2, author);
+            statement.setString(3, publisher);
+            statement.setInt(4, year);
+
+            statement.execute();
+            statement.close();
+
+            return bookExist(connection, title, author, publisher, year);
+        }
+    }
+
+    public static void updateBookAvailability(@NotNull Connection connection, int id, boolean available) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?");
+        statement.setBoolean(1, available);
+        statement.setInt(2, id);
+        statement.execute();
+        statement.close();
+    }
+
+    public static void deleteBook(@NotNull Connection connection, int id) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("DELETE FROM books WHERE id = ?");
+        statement.setInt(1, id);
+        statement.execute();
+        statement.close();
+    }
 }
