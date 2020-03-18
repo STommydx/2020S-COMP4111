@@ -1,6 +1,5 @@
 package hk.ust.cse.comp4111;
 
-import hk.ust.cse.comp4111.auth.BookPutRequest;
 import hk.ust.cse.comp4111.handler.*;
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
@@ -16,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    public static void main (String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Hello World!");
 
 

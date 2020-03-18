@@ -2,7 +2,6 @@ package hk.ust.cse.comp4111.handler;
 
 
 import hk.ust.cse.comp4111.auth.BookService;
-import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.HttpResponse;
@@ -12,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-public class BookDeleteRequestHandler extends  ServerRequestHandler {
+public class BookDeleteRequestHandler extends ServerRequestHandler {
 
     public BookDeleteRequestHandler() {
     }

@@ -1,21 +1,19 @@
 package hk.ust.cse.comp4111.handler;
 
-import hk.ust.cse.comp4111.auth.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import hk.ust.cse.comp4111.auth.AddBookRequest;
+import hk.ust.cse.comp4111.auth.BookService;
 import hk.ust.cse.comp4111.exception.BookExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.*;
-import hk.ust.cse.comp4111.auth.AddBookRequest;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 import java.util.Map;
 
 
-public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest>{
+public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest> {
 
-    private static  ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = new ObjectMapper();
 
     public AddBookRequestHandler() {
         super(AddBookRequest.class);
@@ -49,7 +47,7 @@ public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest>{
             });
 
 
-        }  catch (BookExistException e) {
+        } catch (BookExistException e) {
             response.setStatusCode(HttpStatus.SC_CONFLICT);
             response.addHeader(new Header() {
                 @Override
