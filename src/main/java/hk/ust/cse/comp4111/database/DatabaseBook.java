@@ -40,19 +40,6 @@ public class DatabaseBook {
 
     }
 
-    public static boolean bookExistByID(Connection connection, int id) throws SQLException, BookNotExistException {
-        try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE id = ?")) {
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return true;
-            } else {
-                throw new BookNotExistException();
-            }
-        }
-
-    }
-
 
     public static boolean addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher,year) VALUES (?,?,?,?)")) {
