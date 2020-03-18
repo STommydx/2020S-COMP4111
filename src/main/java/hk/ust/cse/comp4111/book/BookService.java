@@ -13,8 +13,6 @@ import java.sql.SQLException;
 
 public class BookService {
     private static BookService instance = new BookService();
-    private int id;
-    private boolean available;
 
     public static BookService getInstance() {
         return instance;
@@ -28,11 +26,10 @@ public class BookService {
         int year = request.getYear();
 
         try (Connection connection = ConnectionManager.getConnection()) {
-            boolean exist = DatabaseBook.bookExist(connection, title, author, publisher, year);
-            if (exist) {
-                id = DatabaseBook.getId();
-                throw new BookExistException(id);
-            } else if (!exist) {
+            int exist = DatabaseBook.bookExist(connection, title, author, publisher, year);
+            if (exist != -1) {
+                throw new BookExistException(exist);
+            } else {
                 try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher,year) VALUES (?,?,?,?)")) {
                     statement.setString(1, title);
                     statement.setString(2, author);
@@ -42,21 +39,17 @@ public class BookService {
                     statement.execute();
                     statement.close();
 
-                    exist = DatabaseBook.bookExist(connection, title, author, publisher, year);
-                    if (exist) {
-                        id = DatabaseBook.getId();
-                    }
+                    return DatabaseBook.bookExist(connection, title, author, publisher, year);
                 }
             }
         } catch (SQLException e) {
             throw new InternalServerException(e);
         }
 
-        return id;
     }
 
     public void BookPutRequest(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
-        available = request.isAvaliable();
+        boolean available = request.isAvaliable();
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean curAvailabilty = DatabaseBook.curAvailablity(connection, id);
             if (available == false && curAvailabilty == false) {
@@ -92,11 +85,4 @@ public class BookService {
     }
 
 
-    public int getId() {
-        return id;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
 }
