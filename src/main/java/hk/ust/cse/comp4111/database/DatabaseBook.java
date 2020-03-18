@@ -28,7 +28,7 @@ public class DatabaseBook {
 
 
     public static boolean curAvailability(Connection connection, int id) throws SQLException, BookNotExistException {
-        try (PreparedStatement statement = connection.prepareStatement("SELECT id, available FROM books WHERE id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT id, available FROM books WHERE id = ? FOR UPDATE")) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {

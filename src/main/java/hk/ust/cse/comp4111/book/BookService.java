@@ -40,13 +40,17 @@ public class BookService {
     public void putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
         boolean available = request.isAvaliable();
         try (Connection connection = ConnectionManager.getConnection()) {
+            connection.setAutoCommit(false);
             boolean curAvailability = DatabaseBook.curAvailability(connection, id);
             if (!available && !curAvailability) {
+                connection.rollback();
                 throw new BookInvalidStatusException();
             } else if (available && curAvailability) {
+                connection.rollback();
                 throw new BookInvalidStatusException();
             } else {
                 DatabaseBook.updateBookAvailability(connection, id, available);
+                connection.commit();
             }
         } catch (SQLException e) {
             throw new InternalServerException(e);
