@@ -1,7 +1,7 @@
 package hk.ust.cse.comp4111.handler;
 
 
-import hk.ust.cse.comp4111.auth.BookService;
+import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.HttpResponse;
@@ -28,7 +28,7 @@ public class BookDeleteRequestHandler extends ServerRequestHandler {
         String idFromURL = temp[0];
 
         try {
-            BookService.getInstance().BookDeleteRequest(Integer.parseInt(idFromURL));
+            BookService.getInstance().deleteBook(Integer.parseInt(idFromURL));
         } catch (BookNotExistException e) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             response.setReasonPhrase("No book record");
