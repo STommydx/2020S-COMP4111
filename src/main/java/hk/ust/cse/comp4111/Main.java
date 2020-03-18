@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    public static void main (String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Hello World!");
 
 
@@ -59,6 +59,16 @@ public class Main {
         transactionHandler.registerPutHandler(new TransactionActionRequestHandler());
         HttpAsyncRequestHandler<?> authTransactionHandler = new AuthRequestHandler(transactionHandler);
 
+
+        AddBookRequestHandler addBookHandler = new AddBookRequestHandler();
+        HttpAsyncRequestHandler<?> authAddBookHandler = new AuthRequestHandler(addBookHandler);
+
+        MultiRequestHandler bookRequestHandler = new MultiRequestHandler();
+        bookRequestHandler.registerPutHandler(new BookPutRequestHandler());
+        bookRequestHandler.registerDeleteHandler(new BookDeleteRequestHandler());
+        HttpAsyncRequestHandler<?> authBookRequestHandler = new AuthRequestHandler(bookRequestHandler);
+
+
         IOReactorConfig socketConfig = IOReactorConfig.custom()
                 .setSoTimeout(15000)
                 .setTcpNoDelay(true)
@@ -69,6 +79,8 @@ public class Main {
                 .setIOReactorConfig(socketConfig)
                 .registerHandler("/BookManagementService/login", loginHandler)
                 .registerHandler("/BookManagementService/logout", logoutHandler)
+                .registerHandler("/BookManagementService/books", authAddBookHandler)
+                .registerHandler("/BookManagementService/books/*", authBookRequestHandler)
                 .registerHandler("/BookManagementService/transaction", authTransactionHandler)
                 .registerHandler("*", myRequestHandler)
                 .setExceptionLogger(ExceptionLogger.STD_ERR)

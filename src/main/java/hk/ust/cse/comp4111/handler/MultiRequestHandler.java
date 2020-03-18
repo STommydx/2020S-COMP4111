@@ -47,7 +47,7 @@ public class MultiRequestHandler extends ServerRequestHandler {
             postRequest.handle(httpMethod, path, param, requestBody, response);
         } else if (httpMethod.equalsIgnoreCase("PUT") && putRequest != null) {
             putRequest.handle(httpMethod, path, param, requestBody, response);
-        } else if (httpMethod.equalsIgnoreCase("DELETE") && putRequest != null) {
+        } else if (httpMethod.equalsIgnoreCase("DELETE") && deleteRequest != null) {
             deleteRequest.handle(httpMethod, path, param, requestBody, response);
         } else {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
