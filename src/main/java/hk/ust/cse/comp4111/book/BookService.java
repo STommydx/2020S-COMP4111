@@ -49,11 +49,11 @@ public class BookService {
                 DatabaseBook.updateBookAvailability(connection, id, available);
             }
         } catch (SQLException e) {
-
+            throw new InternalServerException(e);
         }
     }
 
-    public void deleteBook(int id) throws BookNotExistException {
+    public void deleteBook(int id) throws BookNotExistException, InternalServerException {
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean bookExist = DatabaseBook.bookExistByID(connection, id);
             if (bookExist) {
@@ -62,6 +62,7 @@ public class BookService {
                 throw new BookNotExistException();
             }
         } catch (SQLException e) {
+            throw new InternalServerException(e);
         }
     }
 
