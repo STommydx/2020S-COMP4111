@@ -12,16 +12,9 @@ public class BookSearchRequest {
     private String author;
     private String title;
     private int limit;
-
-    public enum SortType{
-        BY_ID,
-        BY_TITLE,
-        BY_AUTHOR
-    }
-
     private SortType sortType;
 
-    private BookSearchRequest(){
+    private BookSearchRequest() {
 
     }
 
@@ -69,10 +62,16 @@ public class BookSearchRequest {
         return sortType;
     }
 
-    public static class Builder{
+    public enum SortType {
+        BY_ID,
+        BY_TITLE,
+        BY_AUTHOR
+    }
+
+    public static class Builder {
         BookSearchRequest instance;
 
-        public Builder(){
+        public Builder() {
             instance = new BookSearchRequest();
         }
 
@@ -80,48 +79,48 @@ public class BookSearchRequest {
             return instance;
         }
 
-        public Builder id (int id){
+        public Builder id(int id) {
             instance.searchById = true;
             instance.id = id;
             return this;
         }
 
-        public Builder title (String title){
+        public Builder title(String title) {
             instance.searchByTitle = true;
             instance.title = title;
             return this;
         }
 
-        public Builder author (String author){
+        public Builder author(String author) {
             instance.searchByAuthor = true;
             instance.author = author;
             return this;
         }
 
-        public Builder sortById(){
+        public Builder sortById() {
             instance.sorted = true;
             instance.sortType = SortType.BY_ID;
             return this;
         }
 
-        public Builder sortByTitle(){
+        public Builder sortByTitle() {
             instance.sorted = true;
             instance.sortType = SortType.BY_TITLE;
             return this;
         }
 
-        public Builder sortByAuthor(){
+        public Builder sortByAuthor() {
             instance.sorted = true;
             instance.sortType = SortType.BY_AUTHOR;
             return this;
         }
 
-        public Builder reverseSort(){
+        public Builder reverseSort() {
             instance.sortReversed = true;
             return this;
         }
 
-        public Builder limit (int limit){
+        public Builder limit(int limit) {
             instance.limited = true;
             instance.limit = limit;
             return this;

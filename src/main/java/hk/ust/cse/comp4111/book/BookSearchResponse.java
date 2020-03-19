@@ -1,10 +1,9 @@
 package hk.ust.cse.comp4111.book;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
-import java.util.ListIterator;
 
 public class BookSearchResponse {
     @JsonProperty("FoundBooks")
@@ -13,12 +12,12 @@ public class BookSearchResponse {
     @JsonProperty("Results")
     private final List<AddBookRequest> searchResults;
 
-    public BookSearchResponse(){
+    public BookSearchResponse() {
         totalNumBooks = 0;
         searchResults = null;
     }
 
-    private BookSearchResponse(int totalNumBooks, List<AddBookRequest> searchResults){
+    private BookSearchResponse(int totalNumBooks, List<AddBookRequest> searchResults) {
         this.totalNumBooks = totalNumBooks;
         this.searchResults = searchResults;
     }
@@ -34,17 +33,17 @@ public class BookSearchResponse {
     public static class Builder {
         private List<AddBookRequest> list;
 
-        public Builder(){
+        public Builder() {
             list = new ArrayList<>();
         }
 
-        public Builder addBook(AddBookRequest book){
+        public Builder addBook(AddBookRequest book) {
             list.add(book);
             return this;
         }
 
-        public BookSearchResponse build(){
-            return new BookSearchResponse(list.size(),list);
+        public BookSearchResponse build() {
+            return new BookSearchResponse(list.size(), list);
         }
 
 

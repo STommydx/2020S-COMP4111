@@ -19,6 +19,84 @@ public class BookService {
         return instance;
     }
 
+    public static BookSearchResponse searchBook(BookSearchRequest request) throws SQLException {
+        StringBuilder searchSql = new StringBuilder();
+        searchSql.append("SELECT title, author, publisher, year FROM books");
+        if (request.isSearchById() || request.isSearchByTitle() || request.isSearchByAuthor()) {
+            searchSql.append(" WHERE");
+            if (request.isSearchById()) {
+                searchSql.append(" id=?");
+            }
+            if (request.isSearchByTitle()) {
+                if (request.isSearchById()) {
+                    searchSql.append(" AND");
+                }
+                searchSql.append(" title LIKE CONCAT('%',?,'%')");
+            }
+            if (request.isSearchByAuthor()) {
+                if (request.isSearchById() || request.isSearchByTitle()) {
+                    searchSql.append(" AND");
+                }
+                searchSql.append(" author LIKE CONCAT('%',?,'%')");
+            }
+        }
+        if (request.isSorted()) {
+            searchSql.append(" ORDER BY");
+            if (request.getSortType() == BookSearchRequest.SortType.BY_ID) {
+                searchSql.append(" id");
+            } else if (request.getSortType() == BookSearchRequest.SortType.BY_TITLE) {
+                searchSql.append(" title");
+            } else {
+                searchSql.append(" author");
+            }
+            if (request.isSortReversed()) {
+                searchSql.append(" DESC");
+            }
+        }
+        if (request.isLimited()) {
+            searchSql.append(" LIMIT ?");
+        }
+
+        BookSearchResponse.Builder responseBuilder = new BookSearchResponse.Builder();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = ConnectionManager.getConnection();
+            preparedStatement = connection.prepareStatement(searchSql.toString());
+            int count = 1;
+            if (request.isSearchById()) {
+                preparedStatement.setInt(count++, request.getId());
+            }
+            if (request.isSearchByTitle()) {
+                preparedStatement.setString(count++, request.getTitle());
+            }
+            if (request.isSearchByAuthor()) {
+                preparedStatement.setString(count++, request.getAuthor());
+            }
+            if (request.isLimited()) {
+                preparedStatement.setInt(count, request.getLimit());
+            }
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                String publisher = resultSet.getString("publisher");
+                int year = resultSet.getInt("year");
+                responseBuilder.addBook(new AddBookRequest(title, author, publisher, year));
+            }
+        } finally {
+            if (resultSet != null)
+                resultSet.close();
+            if (preparedStatement != null)
+                preparedStatement.close();
+            ;
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return responseBuilder.build();
+    }
 
     public int addBook(AddBookRequest request) throws BookExistException, InternalServerException {
         String title = request.getTitle();
@@ -69,83 +147,5 @@ public class BookService {
         } catch (SQLException e) {
             throw new InternalServerException(e);
         }
-    }
-
-    public static BookSearchResponse searchBook(BookSearchRequest request) throws SQLException {
-        StringBuilder searchSql = new StringBuilder();
-        searchSql.append("SELECT title, author, publisher, year FROM books");
-        if(request.isSearchById()||request.isSearchByTitle()||request.isSearchByAuthor()){
-            searchSql.append(" WHERE");
-            if(request.isSearchById()) {
-                searchSql.append(" id=?");
-            }
-            if(request.isSearchByTitle()){
-                if(request.isSearchById()){
-                    searchSql.append(" AND");
-                }
-                searchSql.append(" title LIKE CONCAT('%',?,'%')");
-            }
-            if(request.isSearchByAuthor()){
-                if(request.isSearchById()||request.isSearchByTitle()){
-                    searchSql.append(" AND");
-                }
-                searchSql.append(" author LIKE CONCAT('%',?,'%')");
-            }
-        }
-        if(request.isSorted()){
-            searchSql.append(" ORDER BY");
-            if(request.getSortType() == BookSearchRequest.SortType.BY_ID){
-                searchSql.append(" id");
-            } else if(request.getSortType() == BookSearchRequest.SortType.BY_TITLE){
-                searchSql.append(" title");
-            } else{
-                searchSql.append(" author");
-            }
-            if(request.isSortReversed()){
-                searchSql.append(" DESC");
-            }
-        }
-        if(request.isLimited()) {
-            searchSql.append(" LIMIT ?");
-        }
-
-        BookSearchResponse.Builder responseBuilder = new BookSearchResponse.Builder();
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try{
-            connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(searchSql.toString());
-            int count = 1;
-            if (request.isSearchById()) {
-                preparedStatement.setInt(count++, request.getId());
-            }
-            if (request.isSearchByTitle()) {
-                preparedStatement.setString(count++, request.getTitle());
-            }
-            if (request.isSearchByAuthor()) {
-                preparedStatement.setString(count++, request.getAuthor());
-            }
-            if (request.isLimited()) {
-                preparedStatement.setInt(count, request.getLimit());
-            }
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String title = resultSet.getString("title");
-                String author = resultSet.getString("author");
-                String publisher = resultSet.getString("publisher");
-                int year = resultSet.getInt("year");
-                responseBuilder.addBook(new AddBookRequest(title, author, publisher, year));
-            }
-        } finally{
-            if(resultSet!=null)
-                resultSet.close();
-            if(preparedStatement!=null)
-                preparedStatement.close();;
-                if(connection!=null){
-                    connection.close();
-                }
-        }
-        return responseBuilder.build();
     }
 }

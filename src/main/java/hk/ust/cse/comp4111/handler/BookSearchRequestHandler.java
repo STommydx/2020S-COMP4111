@@ -30,45 +30,44 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;
         }
-        try{
+        try {
             BookSearchRequest.Builder builder = new BookSearchRequest.Builder();
-            if(param.containsKey("id")){
+            if (param.containsKey("id")) {
                 builder.id(Integer.parseInt(param.get("id")));
             }
-            if(param.containsKey("title")){
+            if (param.containsKey("title")) {
                 builder.title(param.get("title"));
             }
-            if(param.containsKey("author")){
+            if (param.containsKey("author")) {
                 builder.author(param.get("author"));
             }
-            if(param.containsKey("sortby")){
+            if (param.containsKey("sortby")) {
                 String sortby = param.get("sortby");
-                if(sortby == "id"){
+                if (sortby == "id") {
                     builder.sortById();
                 }
-                if(sortby == "title"){
+                if (sortby == "title") {
                     builder.sortByTitle();
                 }
-                if(sortby == "author"){
+                if (sortby == "author") {
                     builder.sortByAuthor();
                 }
             }
-            if(param.containsKey("order") && param.get("order")=="desc"){
+            if (param.containsKey("order") && param.get("order") == "desc") {
                 builder.reverseSort();
             }
-            if(param.containsKey("limit")){
+            if (param.containsKey("limit")) {
                 builder.limit(Integer.parseInt(param.get("limit")));
             }
             BookSearchResponse searchResponse = BookService.getInstance().searchBook(builder.build());
-            if(searchResponse.getTotalNumBooks() == 0){
+            if (searchResponse.getTotalNumBooks() == 0) {
                 response.setStatusCode(HttpStatus.SC_NO_CONTENT);
-            }
-            else{
+            } else {
                 response.setStatusCode(HttpStatus.SC_OK);
                 response.setEntity(new NStringEntity(objectMapper.writeValueAsString(searchResponse), ContentType.create("application/json", "UTF-8")));
             }
         } catch (SQLException e) {
-        }catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new InternalServerException(e);
         }
     }
