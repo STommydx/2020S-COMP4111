@@ -1,5 +1,8 @@
 package hk.ust.cse.comp4111.database;
 
+import hk.ust.cse.comp4111.book.AddBookRequest;
+import hk.ust.cse.comp4111.book.BookSearchRequest;
+import hk.ust.cse.comp4111.book.BookSearchResponse;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,4 +78,5 @@ public class DatabaseBook {
             return count > 0;
         }
     }
+
 }
