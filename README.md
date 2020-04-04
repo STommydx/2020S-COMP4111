@@ -56,7 +56,7 @@ Lastly push the branch to GitHub and create a PR:
 3. Set the source as `feature/yourfeaturename` and merge into `master`
 4. Wait for approval!
 
-If you are a crazy person and want to know more, refer to the following 2 links for more details:
+Refer to the following 2 links for more details on the PR workflow:
 
 1. [GitHub Standard Fork & Pull Request Workflow](https://gist.github.com/Chaser324/ce0505fbed06b947d962)
 2. [Pull Requests | Atlassian Git Tutorial](https://www.atlassian.com/git/tutorials/making-a-pull-request)
