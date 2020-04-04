@@ -58,43 +58,8 @@ public class BookService {
         }
 
         BookSearchResponse.Builder responseBuilder = new BookSearchResponse.Builder();
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            connection = ConnectionManager.getConnection();
-            preparedStatement = connection.prepareStatement(searchSql.toString());
-            int count = 1;
-            if (request.isSearchById()) {
-                preparedStatement.setInt(count++, request.getId());
-            }
-            if (request.isSearchByTitle()) {
-                preparedStatement.setString(count++, request.getTitle());
-            }
-            if (request.isSearchByAuthor()) {
-                preparedStatement.setString(count++, request.getAuthor());
-            }
-            if (request.isLimited()) {
-                preparedStatement.setInt(count, request.getLimit());
-            }
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                String title = resultSet.getString("title");
-                String author = resultSet.getString("author");
-                String publisher = resultSet.getString("publisher");
-                int year = resultSet.getInt("year");
-                responseBuilder.addBook(new AddBookRequest(title, author, publisher, year));
-            }
-        } finally {
-            if (resultSet != null)
-                resultSet.close();
-            if (preparedStatement != null)
-                preparedStatement.close();
-            ;
-            if (connection != null) {
-                connection.close();
-            }
-        }
+        DatabaseBook.searchBookSql(request, searchSql,responseBuilder);
+
         return responseBuilder.build();
     }
 

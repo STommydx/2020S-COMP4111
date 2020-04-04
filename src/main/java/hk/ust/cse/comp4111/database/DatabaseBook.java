@@ -1,5 +1,8 @@
 package hk.ust.cse.comp4111.database;
 
+import hk.ust.cse.comp4111.book.AddBookRequest;
+import hk.ust.cse.comp4111.book.BookSearchRequest;
+import hk.ust.cse.comp4111.book.BookSearchResponse;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,6 +76,34 @@ public class DatabaseBook {
             statement.setInt(1, id);
             int count = statement.executeUpdate();
             return count > 0;
+        }
+    }
+
+    public static void searchBookSql(BookSearchRequest request,  StringBuilder searchSql,BookSearchResponse.Builder responseBuilder) throws SQLException {
+        try (Connection connection = ConnectionManager.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(searchSql.toString())) {
+                int count = 1;
+                if (request.isSearchById()) {
+                    preparedStatement.setInt(count++, request.getId());
+                }
+                if (request.isSearchByTitle()) {
+                    preparedStatement.setString(count++, request.getTitle());
+                }
+                if (request.isSearchByAuthor()) {
+                    preparedStatement.setString(count++, request.getAuthor());
+                }
+                if (request.isLimited()) {
+                    preparedStatement.setInt(count, request.getLimit());
+                }
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    String title = resultSet.getString("title");
+                    String author = resultSet.getString("author");
+                    String publisher = resultSet.getString("publisher");
+                    int year = resultSet.getInt("year");
+                    responseBuilder.addBook(new AddBookRequest(title, author, publisher, year));
+                }
+            }
         }
     }
 

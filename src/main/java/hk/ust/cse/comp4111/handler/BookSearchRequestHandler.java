@@ -43,17 +43,17 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
             }
             if (param.containsKey("sortby")) {
                 String sortby = param.get("sortby");
-                if (sortby == "id") {
+                if (sortby.equals("id")) {
                     builder.sortById();
                 }
-                if (sortby == "title") {
+                if (sortby.equals("title")) {
                     builder.sortByTitle();
                 }
-                if (sortby == "author") {
+                if (sortby.equals("author")) {
                     builder.sortByAuthor();
                 }
             }
-            if (param.containsKey("order") && param.get("order") == "desc") {
+            if (param.containsKey("order") && param.get("order").equals("desc")) {
                 builder.reverseSort();
             }
             if (param.containsKey("limit")) {
