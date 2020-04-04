@@ -59,13 +59,15 @@ public class Main {
         transactionHandler.registerPutHandler(new TransactionActionRequestHandler());
         HttpAsyncRequestHandler<?> authTransactionHandler = new AuthRequestHandler(transactionHandler);
 
-
-        AddBookRequestHandler addBookHandler = new AddBookRequestHandler();
-        HttpAsyncRequestHandler<?> authAddBookHandler = new AuthRequestHandler(addBookHandler);
+        MultiRequestHandler bookAndSearchHandler = new MultiRequestHandler();
+        bookAndSearchHandler.registerGetHandler(new BookSearchRequestHandler());
+        bookAndSearchHandler.registerPostHandler(new AddBookRequestHandler());
+        HttpAsyncRequestHandler<?> authBookAddSearchHandler = new AuthRequestHandler(bookAndSearchHandler);
 
         MultiRequestHandler bookRequestHandler = new MultiRequestHandler();
         bookRequestHandler.registerPutHandler(new BookPutRequestHandler());
         bookRequestHandler.registerDeleteHandler(new BookDeleteRequestHandler());
+        bookRequestHandler.registerGetHandler(new BookSearchRequestHandler());
         HttpAsyncRequestHandler<?> authBookRequestHandler = new AuthRequestHandler(bookRequestHandler);
 
 
@@ -79,7 +81,7 @@ public class Main {
                 .setIOReactorConfig(socketConfig)
                 .registerHandler("/BookManagementService/login", loginHandler)
                 .registerHandler("/BookManagementService/logout", logoutHandler)
-                .registerHandler("/BookManagementService/books", authAddBookHandler)
+                .registerHandler("/BookManagementService/books", authBookAddSearchHandler)
                 .registerHandler("/BookManagementService/books/*", authBookRequestHandler)
                 .registerHandler("/BookManagementService/transaction", authTransactionHandler)
                 .registerHandler("*", myRequestHandler)
