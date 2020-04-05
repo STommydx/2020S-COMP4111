@@ -44,10 +44,7 @@ public class Main {
                     HttpRequest request,
                     HttpResponse response,
                     HttpContext context) {
-                response.setStatusCode(HttpStatus.SC_OK);
-                response.setEntity(
-                        new StringEntity("Hello Comp4111",
-                                ContentType.TEXT_PLAIN));
+                response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             }
 
         };
