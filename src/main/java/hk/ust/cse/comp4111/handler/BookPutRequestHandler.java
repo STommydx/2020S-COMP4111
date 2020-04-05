@@ -40,6 +40,8 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
         } catch (BookInvalidStatusException e) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
 
+        }catch (NumberFormatException e){
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
 
