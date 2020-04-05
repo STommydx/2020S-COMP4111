@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class LogoutRequestHandler extends ServerRequestHandler {
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
+    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) {
         if (!httpMethod.equalsIgnoreCase("GET")) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;

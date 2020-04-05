@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class LoginRequestHandler extends JsonRequestHandler<LoginRequest> {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public LoginRequestHandler() {
         super(LoginRequest.class);

@@ -1,6 +1,5 @@
 package hk.ust.cse.comp4111.handler;
 
-import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -15,16 +14,16 @@ import java.util.concurrent.Executors;
 
 public abstract class BasicRequestHandler implements HttpAsyncRequestHandler<HttpRequest> {
 
-    private static int NUM_OF_THREADS = 16;
-    private static ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREADS);
+    private static final int NUM_OF_THREADS = 16;
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREADS);
 
     @Override
-    public HttpAsyncRequestConsumer<HttpRequest> processRequest(HttpRequest request, HttpContext context) throws HttpException, IOException {
+    public HttpAsyncRequestConsumer<HttpRequest> processRequest(HttpRequest request, HttpContext context) {
         return new BasicAsyncRequestConsumer();
     }
 
     @Override
-    public void handle(HttpRequest data, HttpAsyncExchange httpExchange, HttpContext context) throws HttpException, IOException {
+    public void handle(HttpRequest data, HttpAsyncExchange httpExchange, HttpContext context) {
         executorService.submit(() -> {
             HttpResponse response = httpExchange.getResponse();
             try {

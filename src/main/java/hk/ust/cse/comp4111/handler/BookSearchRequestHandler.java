@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class BookSearchRequestHandler extends ServerRequestHandler {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public BookSearchRequestHandler() {
     }

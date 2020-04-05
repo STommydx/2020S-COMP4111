@@ -15,10 +15,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthService {
-    private static AuthService instance = new AuthService();
+    private static final AuthService instance = new AuthService();
 
-    private Map<UUID, String> tokenList;
-    private Map<String, UUID> userList;
+    private final Map<UUID, String> tokenList;
+    private final Map<String, UUID> userList;
 
     private AuthService() {
         tokenList = new ConcurrentHashMap<>();

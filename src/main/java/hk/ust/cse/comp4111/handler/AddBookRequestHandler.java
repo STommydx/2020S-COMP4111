@@ -1,6 +1,5 @@
 package hk.ust.cse.comp4111.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import hk.ust.cse.comp4111.book.AddBookRequest;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookExistException;
@@ -12,8 +11,6 @@ import java.util.Map;
 
 
 public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest> {
-
-    private static ObjectMapper mapper = new ObjectMapper();
 
     public AddBookRequestHandler() {
         super(AddBookRequest.class);

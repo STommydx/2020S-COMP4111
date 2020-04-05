@@ -72,7 +72,7 @@ public class BookSearchRequest {
     }
 
     public static class Builder {
-        BookSearchRequest instance;
+        final BookSearchRequest instance;
 
         public Builder() {
             instance = new BookSearchRequest();

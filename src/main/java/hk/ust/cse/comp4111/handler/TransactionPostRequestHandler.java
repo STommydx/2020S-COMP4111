@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class TransactionPostRequestHandler extends ServerRequestHandler {
 
-    private ServerRequestHandler newRequestHandler = new TransactionNewRequestHandler();
-    private ServerRequestHandler commitRequestHandler = new TransactionCommitRequestHandler();
+    private final ServerRequestHandler newRequestHandler = new TransactionNewRequestHandler();
+    private final ServerRequestHandler commitRequestHandler = new TransactionCommitRequestHandler();
 
     @Override
     public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {

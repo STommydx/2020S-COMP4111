@@ -8,12 +8,10 @@ import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class BookService {
-    private static BookService instance = new BookService();
+    private static final BookService instance = new BookService();
 
     public static BookService getInstance() {
         return instance;
@@ -84,7 +82,7 @@ public class BookService {
     }
 
     public void putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
-        boolean available = request.isAvaliable();
+        boolean available = request.isAvailable();
         try (Connection connection = ConnectionManager.getConnection()) {
             connection.setAutoCommit(false);
             boolean curAvailability = DatabaseBook.curAvailability(connection, id);

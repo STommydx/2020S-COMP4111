@@ -3,6 +3,7 @@ package hk.ust.cse.comp4111.handler;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -15,11 +16,11 @@ import java.util.Map;
 
 public abstract class JsonRequestHandler<T> extends ServerRequestHandler {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-    private Class<T> jsonClass;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectReader reader;
 
     public JsonRequestHandler(Class<T> jsonClass) {
-        this.jsonClass = jsonClass;
+        reader = mapper.readerFor(jsonClass);
     }
 
     @Override
@@ -29,7 +30,7 @@ public abstract class JsonRequestHandler<T> extends ServerRequestHandler {
             return;
         }
         try {
-            T result = mapper.readValue(requestBody, jsonClass);
+            T result = reader.readValue(requestBody);
             handleJson(httpMethod, path, param, result, response);
         } catch (JsonParseException | JsonMappingException e) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
