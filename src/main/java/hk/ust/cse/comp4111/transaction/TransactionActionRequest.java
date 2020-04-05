@@ -19,7 +19,7 @@ public class TransactionActionRequest {
     public TransactionActionRequest() {
         transactionId = 0;
         bookId = 0;
-        action = null;
+        action = "";
     }
 
     public int getTransactionId() {

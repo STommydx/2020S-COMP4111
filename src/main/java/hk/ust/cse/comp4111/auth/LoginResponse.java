@@ -11,7 +11,7 @@ public class LoginResponse {
     }
 
     public LoginResponse() {
-        token = null;
+        token = "";
     }
 
     public String getToken() {

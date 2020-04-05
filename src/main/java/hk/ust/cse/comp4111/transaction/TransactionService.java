@@ -23,6 +23,7 @@ public class TransactionService {
         transactionMap = new ConcurrentHashMap<>();
     }
 
+    @NotNull
     public static TransactionService getInstance(@NotNull UUID user) {
         transactionServiceMap.putIfAbsent(user, new TransactionService());
         return transactionServiceMap.get(user);
@@ -35,7 +36,7 @@ public class TransactionService {
     }
 
     public boolean addTransactionAction(@NotNull TransactionActionRequest request) throws BadTransactionIdException, BadTransactionActionException {
-        Transaction transaction = transactionMap.getOrDefault(request.getTransactionId(), null);
+        Transaction transaction = transactionMap.get(request.getTransactionId());
         if (transaction == null) {
             throw new BadTransactionIdException(request.getTransactionId());
         }
@@ -48,7 +49,7 @@ public class TransactionService {
     }
 
     public void commitTransaction(int id) throws InternalServerException, BadTransactionIdException, BadCommitException {
-        Transaction transaction = transactionMap.getOrDefault(id, null);
+        Transaction transaction = transactionMap.get(id);
         if (transaction == null) {
             throw new BadTransactionIdException(id);
         }

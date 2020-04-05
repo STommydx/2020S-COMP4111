@@ -61,7 +61,7 @@ public class AuthService {
     public String getUser(@NotNull UUID uuid, boolean logout) throws TokenNotFoundException {
         String user;
         synchronized (this) {
-            user = tokenList.getOrDefault(uuid, null);
+            user = tokenList.get(uuid);
             if (logout && user != null) {
                 tokenList.remove(uuid);
                 userList.remove(user);

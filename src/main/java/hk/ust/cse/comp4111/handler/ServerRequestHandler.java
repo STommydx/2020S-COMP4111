@@ -27,7 +27,7 @@ public abstract class ServerRequestHandler extends BasicRequestHandler {
             for (String para : uri.getRawQuery().split("&")) {
                 int idx = para.indexOf('=');
                 if (idx == -1) {
-                    queryParam.put(URLDecoder.decode(para, "UTF-8"), null);
+                    queryParam.put(URLDecoder.decode(para, "UTF-8"), "");
                 } else {
                     queryParam.put(URLDecoder.decode(para.substring(0, idx), "UTF-8"), URLDecoder.decode(para.substring(idx + 1), "UTF-8"));
                 }

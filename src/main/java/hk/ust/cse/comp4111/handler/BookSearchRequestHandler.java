@@ -66,8 +66,7 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
                 response.setStatusCode(HttpStatus.SC_OK);
                 response.setEntity(new NStringEntity(objectMapper.writeValueAsString(searchResponse), ContentType.create("application/json", "UTF-8")));
             }
-        } catch (SQLException e) {
-        } catch (JsonProcessingException e) {
+        } catch (SQLException | JsonProcessingException e) {
             throw new InternalServerException(e);
         }
     }

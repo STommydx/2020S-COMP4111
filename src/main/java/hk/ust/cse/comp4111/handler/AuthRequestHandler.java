@@ -22,7 +22,7 @@ public class AuthRequestHandler extends ServerRequestHandler {
 
     @Override
     public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
-        String token = param.getOrDefault("token", null);
+        String token = param.get("token");
         if (token == null) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         } else {

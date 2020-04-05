@@ -19,8 +19,10 @@ public class TransactionActionRequestHandler extends JsonRequestHandler<Transact
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @NotNull TransactionActionRequest requestBody, HttpResponse response) throws InternalServerException {
-        UUID user = UUID.fromString(param.get("token"));
+    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull TransactionActionRequest requestBody, HttpResponse response) throws InternalServerException {
+        String tokenString = param.get("token");
+        if (tokenString == null) throw new InternalServerException(new NullPointerException());
+        UUID user = UUID.fromString(tokenString);
         TransactionService transactionService = TransactionService.getInstance(user);
         try {
             transactionService.addTransactionAction(requestBody);

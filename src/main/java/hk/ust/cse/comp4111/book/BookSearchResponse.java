@@ -14,7 +14,7 @@ public class BookSearchResponse {
 
     public BookSearchResponse() {
         totalNumBooks = 0;
-        searchResults = null;
+        searchResults = new ArrayList<>();
     }
 
     private BookSearchResponse(int totalNumBooks, List<AddBookRequest> searchResults) {
