@@ -9,7 +9,7 @@ CREATE TABLE books (
 	year INT,
 	available BOOLEAN NOT NULL DEFAULT 1,
 	PRIMARY KEY (id),
-	UNIQUE (title, author, publisher, year)
+	UNIQUE (title)
 );
 
 DROP TABLE IF EXISTS users;
