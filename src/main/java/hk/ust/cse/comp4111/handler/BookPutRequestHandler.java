@@ -8,6 +8,7 @@ import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
 
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, BookPutRequest requestBody, HttpResponse response) throws InternalServerException {
+    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull BookPutRequest requestBody, HttpResponse response) throws InternalServerException {
         if (!httpMethod.equalsIgnoreCase("PUT")) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;

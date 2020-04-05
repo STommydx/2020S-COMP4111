@@ -16,6 +16,9 @@ public class AddBookRequest {
     private int year;
 
     public AddBookRequest() {
+        title = "";
+        author = "";
+        publisher = "";
     }
 
     public AddBookRequest(String title, String author, String publisher, int year) {

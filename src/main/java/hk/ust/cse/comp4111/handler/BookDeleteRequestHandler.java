@@ -6,6 +6,7 @@ import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,7 @@ public class BookDeleteRequestHandler extends ServerRequestHandler {
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
+    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
         if (!httpMethod.equalsIgnoreCase("DELETE")) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;

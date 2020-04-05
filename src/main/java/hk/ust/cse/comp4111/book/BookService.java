@@ -19,7 +19,7 @@ public class BookService {
         return instance;
     }
 
-    public static BookSearchResponse searchBook(BookSearchRequest request) throws SQLException {
+    public BookSearchResponse searchBook(BookSearchRequest request) throws SQLException {
         StringBuilder searchSql = new StringBuilder();
         searchSql.append("SELECT title, author, publisher, year FROM books");
         if (request.isSearchById() || request.isSearchByTitle() || request.isSearchByAuthor()) {

@@ -15,7 +15,8 @@ import java.util.concurrent.Executors;
 
 public abstract class BasicRequestHandler implements HttpAsyncRequestHandler<HttpRequest> {
 
-    private static ExecutorService executorService = Executors.newCachedThreadPool();
+    private static int NUM_OF_THREADS = 16;
+    private static ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREADS);
 
     @Override
     public HttpAsyncRequestConsumer<HttpRequest> processRequest(HttpRequest request, HttpContext context) throws HttpException, IOException {

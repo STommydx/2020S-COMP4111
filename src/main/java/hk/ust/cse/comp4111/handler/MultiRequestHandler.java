@@ -11,9 +11,13 @@ import java.util.Map;
 
 public class MultiRequestHandler extends ServerRequestHandler {
 
+    @Nullable
     private ServerRequestHandler getRequest;
+    @Nullable
     private ServerRequestHandler postRequest;
+    @Nullable
     private ServerRequestHandler putRequest;
+    @Nullable
     private ServerRequestHandler deleteRequest;
 
     public MultiRequestHandler() {

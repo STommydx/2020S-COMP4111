@@ -18,7 +18,7 @@ public class LogoutRequestHandler extends ServerRequestHandler {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;
         }
-        String token = param.getOrDefault("token", null);
+        String token = param.get("token");
         if (token == null) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             return;

@@ -30,12 +30,12 @@ public abstract class JsonRequestHandler<T> extends ServerRequestHandler {
         }
         try {
             T result = mapper.readValue(requestBody, jsonClass);
-            handle(httpMethod, path, param, result, response);
+            handleJson(httpMethod, path, param, result, response);
         } catch (JsonParseException | JsonMappingException e) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
 
-    public abstract void handle(String httpMethod, String path, Map<String, String> param, @NotNull T requestBody, HttpResponse response) throws InternalServerException;
+    public abstract void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull T requestBody, HttpResponse response) throws InternalServerException;
 
 }

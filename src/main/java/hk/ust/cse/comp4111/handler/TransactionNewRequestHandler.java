@@ -21,7 +21,9 @@ public class TransactionNewRequestHandler extends ServerRequestHandler {
 
     @Override
     public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
-        UUID user = UUID.fromString(param.get("token"));
+        String tokenString = param.get("token");
+        if (tokenString == null) throw new InternalServerException(new NullPointerException());
+        UUID user = UUID.fromString(tokenString);
         TransactionService transactionService = TransactionService.getInstance(user);
         int transactionId = transactionService.newTransaction().getId();
         NByteArrayEntity entity = new NByteArrayEntity(objectMapper.writeValueAsBytes(new TransactionNewResponse(transactionId)), ContentType.create("application/json", "UTF-8"));

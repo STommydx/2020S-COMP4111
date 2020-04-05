@@ -15,7 +15,10 @@ public class BookSearchRequest {
     private SortType sortType;
 
     private BookSearchRequest() {
-
+        author = "";
+        title = "";
+        limit = Integer.MAX_VALUE;
+        sortType = SortType.BY_TITLE;
     }
 
     public boolean isSearchById() {

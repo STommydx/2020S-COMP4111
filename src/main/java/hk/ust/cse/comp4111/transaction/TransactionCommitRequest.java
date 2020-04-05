@@ -15,7 +15,7 @@ public class TransactionCommitRequest {
 
     public TransactionCommitRequest() {
         transactionId = 0;
-        action = null;
+        action = "";
     }
 
     public int getTransactionId() {

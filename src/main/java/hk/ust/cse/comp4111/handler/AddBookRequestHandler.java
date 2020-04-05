@@ -20,7 +20,7 @@ public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest> {
     }
 
 
-    public void handle(String httpMethod, String path, Map<String, String> param, @NotNull AddBookRequest requestBody, HttpResponse response) throws InternalServerException {
+    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull AddBookRequest requestBody, HttpResponse response) throws InternalServerException {
         if (!httpMethod.equalsIgnoreCase("POST")) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;
