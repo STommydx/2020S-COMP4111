@@ -40,12 +40,19 @@ public class BookService {
         }
         if (request.isSorted()) {
             searchSql.append(" ORDER BY");
-            if (request.getSortType() == BookSearchRequest.SortType.BY_ID) {
-                searchSql.append(" id");
-            } else if (request.getSortType() == BookSearchRequest.SortType.BY_TITLE) {
-                searchSql.append(" title");
-            } else {
-                searchSql.append(" author");
+            switch (request.getSortType()) {
+                case BY_ID:
+                    searchSql.append(" id");
+                    break;
+                case BY_TITLE:
+                    searchSql.append(" title");
+                    break;
+                case BY_AUTHOR:
+                    searchSql.append(" author");
+                    break;
+                case BY_YEAR:
+                    searchSql.append(" year");
+                    break;
             }
             if (request.isSortReversed()) {
                 searchSql.append(" DESC");

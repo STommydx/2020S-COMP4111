@@ -68,7 +68,8 @@ public class BookSearchRequest {
     public enum SortType {
         BY_ID,
         BY_TITLE,
-        BY_AUTHOR
+        BY_AUTHOR,
+        BY_YEAR
     }
 
     public static class Builder {
@@ -115,6 +116,12 @@ public class BookSearchRequest {
         public Builder sortByAuthor() {
             instance.sorted = true;
             instance.sortType = SortType.BY_AUTHOR;
+            return this;
+        }
+
+        public Builder sortByYear() {
+            instance.sorted = true;
+            instance.sortType = SortType.BY_YEAR;
             return this;
         }
 
