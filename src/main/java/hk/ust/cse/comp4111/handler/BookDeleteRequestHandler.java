@@ -32,6 +32,8 @@ public class BookDeleteRequestHandler extends ServerRequestHandler {
         } catch (BookNotExistException e) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             response.setReasonPhrase("No book record");
+        } catch (NumberFormatException e){
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }
 }
