@@ -52,6 +52,9 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
                 if (sortby.equals("author")) {
                     builder.sortByAuthor();
                 }
+                if (sortby.equals("year")) {
+                    builder.sortByYear();
+                }
             }
             if (param.containsKey("order") && param.get("order").equals("desc")) {
                 builder.reverseSort();
