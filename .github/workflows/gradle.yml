@@ -27,4 +27,4 @@ jobs:
       - name: Cleanup Gradle build
         run: ./gradlew clean
       - name: Static code analysis with Infer
-        run: infer-linux64-v0.17.0/bin/infer run --fail-on-issue -- ./gradlew build
+        run: infer-linux64-v0.17.0/bin/infer run --eradicate --fail-on-issue -- ./gradlew build
