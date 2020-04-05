@@ -69,5 +69,8 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
         } catch (SQLException | JsonProcessingException e) {
             throw new InternalServerException(e);
         }
+        catch (Exception e){
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+        }
     }
 }
