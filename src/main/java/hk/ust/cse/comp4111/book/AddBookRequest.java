@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AddBookRequest {
     @JsonProperty("Title")
-    private String title;
+    private final String title;
 
     @JsonProperty("Author")
-    private String author;
+    private final String author;
 
     @JsonProperty("Publisher")
-    private String publisher;
+    private final String publisher;
 
     @JsonProperty("Year")
     private int year;

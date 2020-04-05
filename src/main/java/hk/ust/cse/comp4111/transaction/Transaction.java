@@ -10,7 +10,7 @@ import java.util.List;
 public class Transaction {
     private static int nextAvailableId = 0;
     private final int id;
-    private List<TransactionAction> actions;
+    private final List<TransactionAction> actions;
 
     public Transaction() {
         synchronized (Transaction.class) {

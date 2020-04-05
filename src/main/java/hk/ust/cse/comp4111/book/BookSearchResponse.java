@@ -31,7 +31,7 @@ public class BookSearchResponse {
     }
 
     public static class Builder {
-        private List<AddBookRequest> list;
+        private final List<AddBookRequest> list;
 
         public Builder() {
             list = new ArrayList<>();

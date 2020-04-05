@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class AuthRequestHandler extends ServerRequestHandler {
 
-    private ServerRequestHandler requestHandler;
+    private final ServerRequestHandler requestHandler;
 
     public AuthRequestHandler(@NotNull ServerRequestHandler requestHandler) {
         this.requestHandler = requestHandler;

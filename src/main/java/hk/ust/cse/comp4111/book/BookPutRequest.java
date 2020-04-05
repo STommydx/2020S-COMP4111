@@ -4,17 +4,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BookPutRequest {
     @JsonProperty("Available")
-    private boolean avaliable;
+    private boolean available;
 
     public BookPutRequest() {
     }
 
-    public BookPutRequest(boolean avaliable) {
-        this.avaliable = avaliable;
+    public BookPutRequest(boolean available) {
+        this.available = available;
     }
 
-    public boolean isAvaliable() {
-        return avaliable;
+    public boolean isAvailable() {
+        return available;
     }
 
 }

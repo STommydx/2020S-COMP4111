@@ -29,7 +29,7 @@ public class Main {
         HttpAsyncRequestHandler<HttpRequest> myRequestHandler = new HttpAsyncRequestHandler<HttpRequest>() {
 
             @Override
-            public HttpAsyncRequestConsumer<HttpRequest> processRequest(HttpRequest request, HttpContext context) throws HttpException, IOException {
+            public HttpAsyncRequestConsumer<HttpRequest> processRequest(HttpRequest request, HttpContext context) {
                 return new BasicAsyncRequestConsumer();
             }
 
@@ -43,11 +43,8 @@ public class Main {
             public void handle(
                     HttpRequest request,
                     HttpResponse response,
-                    HttpContext context) throws HttpException, IOException {
-                response.setStatusCode(HttpStatus.SC_OK);
-                response.setEntity(
-                        new StringEntity("Hello Comp4111",
-                                ContentType.TEXT_PLAIN));
+                    HttpContext context) {
+                response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             }
 
         };
@@ -90,11 +87,6 @@ public class Main {
         server.start();
         server.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                server.shutdown(1, TimeUnit.SECONDS);
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> server.shutdown(1, TimeUnit.SECONDS)));
     }
 }

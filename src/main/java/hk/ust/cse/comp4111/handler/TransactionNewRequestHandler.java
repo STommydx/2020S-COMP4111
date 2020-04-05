@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class TransactionNewRequestHandler extends ServerRequestHandler {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {

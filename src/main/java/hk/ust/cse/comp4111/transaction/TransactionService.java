@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TransactionService {
 
-    private static Map<UUID, TransactionService> transactionServiceMap = new ConcurrentHashMap<>();
-    private Map<Integer, Transaction> transactionMap;
+    private static final Map<UUID, TransactionService> transactionServiceMap = new ConcurrentHashMap<>();
+    private final Map<Integer, Transaction> transactionMap;
 
     private TransactionService() {
         transactionMap = new ConcurrentHashMap<>();
