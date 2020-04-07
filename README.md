@@ -2,7 +2,7 @@
 
 ![Java CI](https://github.com/STommydx/2020S-COMP4111/workflows/Java%20CI/badge.svg)
 
-This is the working repository for the COMP 4111 project. The project is a RESTful service on book management system for librarians. It also features a simplified JSON parser that is syntatically similar to the Google GSON library.
+This is the working repository for the COMP 4111 project. The project is a RESTful service on book management system for librarians.
 
 ## How do I get set up?
 
@@ -32,6 +32,12 @@ The project work best with the Intellij IDEA. To import the project in IDEA:
 
 You can find gradle tasks from the Gradle tab on the rightmost toolbar. The `application -> run` task starts the server.
 The server listens on port 8080 by default, which should be the same as the project specification.
+
+Alternatively, you can run the server in the terminal with the command below:
+
+```
+./gradlew run
+```
 
 ## Contribution guidelines
 
