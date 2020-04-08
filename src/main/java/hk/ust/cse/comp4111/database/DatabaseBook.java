@@ -45,7 +45,7 @@ public class DatabaseBook {
 
 
     public static boolean addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher,year) VALUES (?,?,?,?)")) {
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher, year) VALUES (?,?,?,?)")) {
             statement.setString(1, title);
             statement.setString(2, author);
             statement.setString(3, publisher);
@@ -79,7 +79,7 @@ public class DatabaseBook {
         }
     }
 
-    public static void searchBookSql(BookSearchRequest request,  StringBuilder searchSql,BookSearchResponse.Builder responseBuilder) throws SQLException {
+    public static void searchBookSql(BookSearchRequest request, StringBuilder searchSql, BookSearchResponse.Builder responseBuilder) throws SQLException {
         try (Connection connection = ConnectionManager.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(searchSql.toString())) {
                 int count = 1;
