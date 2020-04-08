@@ -64,11 +64,11 @@ public class DatabaseBook {
     }
 
     public static void updateBookAvailability(@NotNull Connection connection, int id, boolean available) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?");
-        statement.setBoolean(1, available);
-        statement.setInt(2, id);
-        statement.execute();
-        statement.close();
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?")) {
+            statement.setBoolean(1, available);
+            statement.setInt(2, id);
+            statement.execute();
+        }
     }
 
     public static boolean deleteBook(@NotNull Connection connection, int id) throws SQLException {
