@@ -1,6 +1,7 @@
 package hk.ust.cse.comp4111.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import hk.ust.cse.comp4111.transaction.TransactionNewResponse;
 import hk.ust.cse.comp4111.transaction.TransactionService;
@@ -18,6 +19,7 @@ import java.util.UUID;
 public class TransactionNewRequestHandler extends ServerRequestHandler {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectWriter objectWriter = objectMapper.writer();
 
     @Override
     public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
@@ -26,7 +28,7 @@ public class TransactionNewRequestHandler extends ServerRequestHandler {
         UUID user = UUID.fromString(tokenString);
         TransactionService transactionService = TransactionService.getInstance(user);
         int transactionId = transactionService.newTransaction().getId();
-        NByteArrayEntity entity = new NByteArrayEntity(objectMapper.writeValueAsBytes(new TransactionNewResponse(transactionId)), ContentType.create("application/json", "UTF-8"));
+        NByteArrayEntity entity = new NByteArrayEntity(objectWriter.writeValueAsBytes(new TransactionNewResponse(transactionId)), ContentType.create("application/json", "UTF-8"));
         response.setStatusCode(HttpStatus.SC_OK);
         response.setEntity(entity);
     }

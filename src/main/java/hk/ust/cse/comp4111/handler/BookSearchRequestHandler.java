@@ -2,6 +2,7 @@ package hk.ust.cse.comp4111.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import hk.ust.cse.comp4111.book.BookSearchRequest;
 import hk.ust.cse.comp4111.book.BookSearchResponse;
 import hk.ust.cse.comp4111.book.BookService;
@@ -9,7 +10,7 @@ import hk.ust.cse.comp4111.exception.InternalServerException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
+import org.apache.http.nio.entity.NByteArrayEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
@@ -20,9 +21,7 @@ import java.util.Map;
 public class BookSearchRequestHandler extends ServerRequestHandler {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    public BookSearchRequestHandler() {
-    }
+    private final ObjectWriter objectWriter = objectMapper.writer();
 
     @Override
     public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws InternalServerException {
@@ -67,7 +66,7 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
                 response.setStatusCode(HttpStatus.SC_NO_CONTENT);
             } else {
                 response.setStatusCode(HttpStatus.SC_OK);
-                response.setEntity(new NStringEntity(objectMapper.writeValueAsString(searchResponse), ContentType.create("application/json", "UTF-8")));
+                response.setEntity(new NByteArrayEntity(objectWriter.writeValueAsBytes(searchResponse), ContentType.create("application/json", "UTF-8")));
             }
         } catch (SQLException | JsonProcessingException e) {
             throw new InternalServerException(e);

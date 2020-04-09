@@ -36,6 +36,7 @@ public class TransactionCommitRequestHandler extends JsonRequestHandler<Transact
             case "cancel":
                 try {
                     transactionService.cancelTransaction(requestBody.getTransactionId());
+                    response.setStatusCode(HttpStatus.SC_OK);
                 } catch (BadTransactionIdException e) {
                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                 }

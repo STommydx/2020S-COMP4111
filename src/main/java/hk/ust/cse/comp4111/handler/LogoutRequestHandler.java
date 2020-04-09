@@ -1,13 +1,11 @@
 package hk.ust.cse.comp4111.handler;
 
 import hk.ust.cse.comp4111.auth.AuthService;
-import hk.ust.cse.comp4111.exception.InternalServerException;
 import hk.ust.cse.comp4111.exception.TokenNotFoundException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
