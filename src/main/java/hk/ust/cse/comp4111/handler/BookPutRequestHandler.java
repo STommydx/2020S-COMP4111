@@ -1,6 +1,5 @@
 package hk.ust.cse.comp4111.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import hk.ust.cse.comp4111.book.BookPutRequest;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
@@ -14,12 +13,9 @@ import java.util.Map;
 
 public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-
     public BookPutRequestHandler() {
         super(BookPutRequest.class);
     }
-
 
     @Override
     public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull BookPutRequest requestBody, HttpResponse response) throws InternalServerException {
@@ -34,13 +30,11 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
 
         try {
             BookService.getInstance().putBook(requestBody, Integer.parseInt(idFromURL));
+            response.setStatusCode(HttpStatus.SC_OK);
         } catch (BookNotExistException e) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             response.setReasonPhrase("No book record");
-        } catch (BookInvalidStatusException e) {
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-
-        }catch (NumberFormatException e){
+        } catch (BookInvalidStatusException | NumberFormatException e) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
     }

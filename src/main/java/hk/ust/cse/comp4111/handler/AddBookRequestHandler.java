@@ -26,42 +26,10 @@ public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest> {
         try {
             int id = BookService.getInstance().addBook(requestBody);
             response.setStatusCode(HttpStatus.SC_CREATED);
-            response.addHeader(new Header() {
-                @Override
-                public HeaderElement[] getElements() throws ParseException {
-                    return new HeaderElement[0];
-                }
-
-                @Override
-                public String getName() {
-                    return "Location";
-                }
-
-                @Override
-                public String getValue() {
-                    return "/books/" + id;
-                }
-            });
-
-
+            response.setHeader("Location", "/books/" + id);
         } catch (BookExistException e) {
             response.setStatusCode(HttpStatus.SC_CONFLICT);
-            response.addHeader(new Header() {
-                @Override
-                public HeaderElement[] getElements() throws ParseException {
-                    return new HeaderElement[0];
-                }
-
-                @Override
-                public String getName() {
-                    return "Duplicate record";
-                }
-
-                @Override
-                public String getValue() {
-                    return "/books/" + e.getId();
-                }
-            });
+            response.setHeader("Duplicate record", "/books/" + e.getId());
         }
     }
 }
