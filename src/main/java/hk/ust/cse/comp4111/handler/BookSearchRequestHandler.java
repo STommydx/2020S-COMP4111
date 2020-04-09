@@ -2,17 +2,17 @@ package hk.ust.cse.comp4111.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import hk.ust.cse.comp4111.book.BookSearchRequest;
 import hk.ust.cse.comp4111.book.BookSearchResponse;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -20,15 +20,16 @@ import java.util.Map;
 public class BookSearchRequestHandler extends ServerRequestHandler {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectWriter objectWriter;
 
     public BookSearchRequestHandler() {
+        objectWriter = objectMapper.writer();
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws InternalServerException {
+    public AsyncResponseProducer handle(String httpMethod, String path, Map<String, String> param, @Nullable byte[] requestBody) throws InternalServerException {
         if (!httpMethod.equalsIgnoreCase("GET")) {
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-            return;
+            return AsyncResponseBuilder.create(HttpStatus.SC_NOT_FOUND).build();
         }
         try {
             BookSearchRequest.Builder builder = new BookSearchRequest.Builder();
@@ -64,15 +65,16 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
             }
             BookSearchResponse searchResponse = BookService.getInstance().searchBook(builder.build());
             if (searchResponse.getTotalNumBooks() == 0) {
-                response.setStatusCode(HttpStatus.SC_NO_CONTENT);
+                return AsyncResponseBuilder.create(HttpStatus.SC_NO_CONTENT).build();
             } else {
-                response.setStatusCode(HttpStatus.SC_OK);
-                response.setEntity(new NStringEntity(objectMapper.writeValueAsString(searchResponse), ContentType.create("application/json", "UTF-8")));
+                return AsyncResponseBuilder.create(HttpStatus.SC_OK)
+                        .setEntity(objectWriter.writeValueAsBytes(searchResponse), ContentType.create("application/json", "UTF-8"))
+                        .build();
             }
         } catch (SQLException | JsonProcessingException e) {
             throw new InternalServerException(e);
         } catch (NumberFormatException e) {
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
         }
     }
 }

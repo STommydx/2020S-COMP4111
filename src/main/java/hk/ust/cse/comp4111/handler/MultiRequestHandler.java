@@ -1,12 +1,12 @@
 package hk.ust.cse.comp4111.handler;
 
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 public class MultiRequestHandler extends ServerRequestHandler {
@@ -44,17 +44,17 @@ public class MultiRequestHandler extends ServerRequestHandler {
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
+    public AsyncResponseProducer handle(String httpMethod, String path, Map<String, String> param, @Nullable byte[] requestBody) throws IOException, InternalServerException {
         if (httpMethod.equalsIgnoreCase("GET") && getRequest != null) {
-            getRequest.handle(httpMethod, path, param, requestBody, response);
+            return getRequest.handle(httpMethod, path, param, requestBody);
         } else if (httpMethod.equalsIgnoreCase("POST") && postRequest != null) {
-            postRequest.handle(httpMethod, path, param, requestBody, response);
+            return postRequest.handle(httpMethod, path, param, requestBody);
         } else if (httpMethod.equalsIgnoreCase("PUT") && putRequest != null) {
-            putRequest.handle(httpMethod, path, param, requestBody, response);
+            return putRequest.handle(httpMethod, path, param, requestBody);
         } else if (httpMethod.equalsIgnoreCase("DELETE") && deleteRequest != null) {
-            deleteRequest.handle(httpMethod, path, param, requestBody, response);
+            return deleteRequest.handle(httpMethod, path, param, requestBody);
         } else {
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
+            return AsyncResponseBuilder.create(HttpStatus.SC_NOT_FOUND).build();
         }
     }
 }

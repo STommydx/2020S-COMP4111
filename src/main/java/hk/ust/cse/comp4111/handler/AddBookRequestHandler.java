@@ -4,7 +4,9 @@ import hk.ust.cse.comp4111.book.AddBookRequest;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.*;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -17,51 +19,21 @@ public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest> {
     }
 
 
-    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull AddBookRequest requestBody, HttpResponse response) throws InternalServerException {
+    public AsyncResponseProducer handleJson(String httpMethod, String path, Map<String, String> param, @NotNull AddBookRequest requestBody) throws InternalServerException {
         if (!httpMethod.equalsIgnoreCase("POST")) {
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-            return;
+            return AsyncResponseBuilder.create(HttpStatus.SC_NOT_FOUND).build();
         }
 
         try {
             int id = BookService.getInstance().addBook(requestBody);
-            response.setStatusCode(HttpStatus.SC_CREATED);
-            response.addHeader(new Header() {
-                @Override
-                public HeaderElement[] getElements() throws ParseException {
-                    return new HeaderElement[0];
-                }
-
-                @Override
-                public String getName() {
-                    return "Location";
-                }
-
-                @Override
-                public String getValue() {
-                    return "/books/" + id;
-                }
-            });
-
+            return AsyncResponseBuilder.create(HttpStatus.SC_CREATED)
+                    .setHeader("Location", "/books/" + id)
+                    .build();
 
         } catch (BookExistException e) {
-            response.setStatusCode(HttpStatus.SC_CONFLICT);
-            response.addHeader(new Header() {
-                @Override
-                public HeaderElement[] getElements() throws ParseException {
-                    return new HeaderElement[0];
-                }
-
-                @Override
-                public String getName() {
-                    return "Duplicate record";
-                }
-
-                @Override
-                public String getValue() {
-                    return "/books/" + e.getId();
-                }
-            });
+            return AsyncResponseBuilder.create(HttpStatus.SC_CONFLICT)
+                    .setHeader("Duplicate record", "/books/" + e.getId())
+                    .build();
         }
     }
 }

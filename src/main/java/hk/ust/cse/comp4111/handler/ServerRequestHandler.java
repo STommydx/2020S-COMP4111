@@ -1,25 +1,30 @@
 package hk.ust.cse.comp4111.handler;
 
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.*;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ServerRequestHandler extends BasicRequestHandler {
     @Override
-    public void handle(HttpRequest data, HttpResponse response, HttpContext context) throws IOException {
-        RequestLine requestLine = data.getRequestLine();
-        String httpMethod = requestLine.getMethod();
-        URI uri = URI.create(data.getRequestLine().getUri());
+    public AsyncResponseProducer handle(Message<HttpRequest, byte[]> data, HttpContext context) throws IOException, HttpException {
+        String httpMethod = data.getHead().getMethod();
+        URI uri;
+        try {
+            uri = data.getHead().getUri();
+        } catch (URISyntaxException ex) {
+            throw new ProtocolException(ex.getMessage(), ex);
+        }
         String path = uri.getPath();
 
         Map<String, String> queryParam = new HashMap<>();
@@ -34,22 +39,16 @@ public abstract class ServerRequestHandler extends BasicRequestHandler {
             }
         }
 
-        InputStream requestBody = null;
-        if (data instanceof HttpEntityEnclosingRequest) {
-            HttpEntity entity = ((HttpEntityEnclosingRequest) data).getEntity();
-            if (entity.getContentLength() > 0) requestBody = entity.getContent();
-        }
-
         try {
-            handle(httpMethod, path, queryParam, requestBody, response);
+            return handle(httpMethod, path, queryParam, data.getBody());
         } catch (InternalServerException e) {
             e.printStackTrace();
-            response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
-            response.setEntity(new NStringEntity(e.getLocalizedMessage(), ContentType.create("text/plain", "UTF-8")));
+            return AsyncResponseBuilder.create(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                    .setEntity(e.getLocalizedMessage(), ContentType.create("text/plain", "UTF-8"))
+                    .build();
         }
-
     }
 
-    public abstract void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException;
+    public abstract AsyncResponseProducer handle(String httpMethod, String path, Map<String, String> param, @Nullable byte[] requestBody) throws IOException, InternalServerException;
 
 }

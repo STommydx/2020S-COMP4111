@@ -4,11 +4,11 @@ package hk.ust.cse.comp4111.handler;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStream;
 import java.util.Map;
 
 public class BookDeleteRequestHandler extends ServerRequestHandler {
@@ -17,10 +17,9 @@ public class BookDeleteRequestHandler extends ServerRequestHandler {
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws InternalServerException {
+    public AsyncResponseProducer handle(String httpMethod, String path, Map<String, String> param, @Nullable byte[] requestBody) throws InternalServerException {
         if (!httpMethod.equalsIgnoreCase("DELETE")) {
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-            return;
+            return AsyncResponseBuilder.create(HttpStatus.SC_NOT_FOUND).build();
         }
 
         String[] temp = path.split("/");
@@ -29,11 +28,11 @@ public class BookDeleteRequestHandler extends ServerRequestHandler {
 
         try {
             BookService.getInstance().deleteBook(Integer.parseInt(idFromURL));
+            return AsyncResponseBuilder.create(HttpStatus.SC_OK).build();
         } catch (BookNotExistException e) {
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-            response.setReasonPhrase("No book record");
+            return AsyncResponseBuilder.create(HttpStatus.SC_NOT_FOUND).build();
         } catch (NumberFormatException e){
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
         }
     }
 }

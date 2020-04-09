@@ -5,8 +5,9 @@ import hk.ust.cse.comp4111.exception.BadTransactionIdException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
 import hk.ust.cse.comp4111.transaction.TransactionCommitRequest;
 import hk.ust.cse.comp4111.transaction.TransactionService;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -19,7 +20,7 @@ public class TransactionCommitRequestHandler extends JsonRequestHandler<Transact
     }
 
     @Override
-    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull TransactionCommitRequest requestBody, HttpResponse response) throws InternalServerException {
+    public AsyncResponseProducer handleJson(String httpMethod, String path, Map<String, String> param, @NotNull TransactionCommitRequest requestBody) throws InternalServerException {
         String tokenString = param.get("token");
         if (tokenString == null) throw new InternalServerException(new NullPointerException());
         UUID user = UUID.fromString(tokenString);
@@ -28,20 +29,19 @@ public class TransactionCommitRequestHandler extends JsonRequestHandler<Transact
             case "commit":
                 try {
                     transactionService.commitTransaction(requestBody.getTransactionId());
-                    response.setStatusCode(HttpStatus.SC_OK);
+                    return AsyncResponseBuilder.create(HttpStatus.SC_OK).build();
                 } catch (BadTransactionIdException | BadCommitException e) {
-                    response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                    return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
                 }
-                break;
             case "cancel":
                 try {
                     transactionService.cancelTransaction(requestBody.getTransactionId());
+                    return AsyncResponseBuilder.create(HttpStatus.SC_OK).build();
                 } catch (BadTransactionIdException e) {
-                    response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                    return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
                 }
-                break;
             default:
-                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
         }
     }
 }

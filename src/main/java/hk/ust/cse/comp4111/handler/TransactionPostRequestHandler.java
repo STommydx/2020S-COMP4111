@@ -1,11 +1,10 @@
 package hk.ust.cse.comp4111.handler;
 
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 public class TransactionPostRequestHandler extends ServerRequestHandler {
@@ -14,11 +13,11 @@ public class TransactionPostRequestHandler extends ServerRequestHandler {
     private final ServerRequestHandler commitRequestHandler = new TransactionCommitRequestHandler();
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
+    public AsyncResponseProducer handle(String httpMethod, String path, Map<String, String> param, @Nullable byte[] requestBody) throws IOException, InternalServerException {
         if (requestBody == null) {
-            newRequestHandler.handle(httpMethod, path, param, null, response);
+            return newRequestHandler.handle(httpMethod, path, param, null);
         } else {
-            commitRequestHandler.handle(httpMethod, path, param, requestBody, response);
+            return commitRequestHandler.handle(httpMethod, path, param, requestBody);
         }
     }
 }

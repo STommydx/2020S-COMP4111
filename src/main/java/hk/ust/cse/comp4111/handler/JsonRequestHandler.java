@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 public abstract class JsonRequestHandler<T> extends ServerRequestHandler {
@@ -24,19 +24,18 @@ public abstract class JsonRequestHandler<T> extends ServerRequestHandler {
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
+    public AsyncResponseProducer handle(String httpMethod, String path, Map<String, String> param, @Nullable byte[] requestBody) throws IOException, InternalServerException {
         if (requestBody == null) {
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-            return;
+            return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
         }
         try {
             T result = reader.readValue(requestBody);
-            handleJson(httpMethod, path, param, result, response);
+            return handleJson(httpMethod, path, param, result);
         } catch (JsonParseException | JsonMappingException e) {
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
         }
     }
 
-    public abstract void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull T requestBody, HttpResponse response) throws InternalServerException;
+    public abstract AsyncResponseProducer handleJson(String httpMethod, String path, Map<String, String> param, @NotNull T requestBody) throws InternalServerException;
 
 }

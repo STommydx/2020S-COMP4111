@@ -1,20 +1,18 @@
 package hk.ust.cse.comp4111.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import hk.ust.cse.comp4111.book.BookPutRequest;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.nio.AsyncResponseProducer;
+import org.apache.hc.core5.http.nio.support.AsyncResponseBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
-
-    private static ObjectMapper mapper = new ObjectMapper();
 
     public BookPutRequestHandler() {
         super(BookPutRequest.class);
@@ -22,10 +20,9 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
 
 
     @Override
-    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull BookPutRequest requestBody, HttpResponse response) throws InternalServerException {
+    public AsyncResponseProducer handleJson(String httpMethod, String path, Map<String, String> param, @NotNull BookPutRequest requestBody) throws InternalServerException {
         if (!httpMethod.equalsIgnoreCase("PUT")) {
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-            return;
+            return AsyncResponseBuilder.create(HttpStatus.SC_NOT_FOUND).build();
         }
 
         String[] temp = path.split("/");
@@ -34,14 +31,11 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
 
         try {
             BookService.getInstance().putBook(requestBody, Integer.parseInt(idFromURL));
+            return AsyncResponseBuilder.create(HttpStatus.SC_OK).build();
         } catch (BookNotExistException e) {
-            response.setStatusCode(HttpStatus.SC_NOT_FOUND);
-            response.setReasonPhrase("No book record");
-        } catch (BookInvalidStatusException e) {
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
-
-        }catch (NumberFormatException e){
-            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            return AsyncResponseBuilder.create(HttpStatus.SC_NOT_FOUND).build();
+        } catch (BookInvalidStatusException | NumberFormatException e) {
+            return AsyncResponseBuilder.create(HttpStatus.SC_BAD_REQUEST).build();
         }
     }
 
