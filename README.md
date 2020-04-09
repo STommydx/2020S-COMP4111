@@ -6,7 +6,7 @@ This is the working repository for the COMP 4111 project. The project is a RESTf
 
 ## How do I get set up?
 
-### Prerequsites
+### Prerequisites
 
 #### Java
 
@@ -51,7 +51,7 @@ The project would not be successful without your contribution! Follow the steps 
 
 Before submitting, you should clean up your work:
 
-1. Switch to `master` branch, do a pull to update latest changes
+1. Switch to `master` branch, do a pull to update to the latest changes
 2. Switch back to `feature/yourfeaturename`, run a rebase with master
 3. Resolve conflicts if needed, seek help if you don't know how to do so
 
@@ -60,7 +60,7 @@ Lastly push the branch to GitHub and create a PR:
 1. VCS -> Git -> Push Branch `feature/yourfeaturename`
 2. Go to GitHub and create a pull request
 3. Set the source as `feature/yourfeaturename` and merge into `master`
-4. Wait for approval!
+4. Wait for the approval!
 
 Refer to the following 2 links for more details on the PR workflow:
 

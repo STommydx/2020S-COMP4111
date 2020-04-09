@@ -1,6 +1,5 @@
 package hk.ust.cse.comp4111;
 
-import hk.ust.cse.comp4111.exception.InternalServerException;
 import hk.ust.cse.comp4111.handler.*;
 import org.apache.http.ExceptionLogger;
 import org.apache.http.HttpResponse;
