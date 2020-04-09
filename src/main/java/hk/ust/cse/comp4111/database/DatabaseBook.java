@@ -45,7 +45,7 @@ public class DatabaseBook {
 
 
     public static boolean addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher,year) VALUES (?,?,?,?)")) {
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher, year) VALUES (?,?,?,?)")) {
             statement.setString(1, title);
             statement.setString(2, author);
             statement.setString(3, publisher);
@@ -64,11 +64,11 @@ public class DatabaseBook {
     }
 
     public static void updateBookAvailability(@NotNull Connection connection, int id, boolean available) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?");
-        statement.setBoolean(1, available);
-        statement.setInt(2, id);
-        statement.execute();
-        statement.close();
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?")) {
+            statement.setBoolean(1, available);
+            statement.setInt(2, id);
+            statement.execute();
+        }
     }
 
     public static boolean deleteBook(@NotNull Connection connection, int id) throws SQLException {
@@ -79,7 +79,7 @@ public class DatabaseBook {
         }
     }
 
-    public static void searchBookSql(BookSearchRequest request,  StringBuilder searchSql,BookSearchResponse.Builder responseBuilder) throws SQLException {
+    public static void searchBookSql(BookSearchRequest request, StringBuilder searchSql, BookSearchResponse.Builder responseBuilder) throws SQLException {
         try (Connection connection = ConnectionManager.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(searchSql.toString())) {
                 int count = 1;
