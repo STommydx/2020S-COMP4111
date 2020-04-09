@@ -2,7 +2,7 @@
 
 ![Java CI](https://github.com/STommydx/2020S-COMP4111/workflows/Java%20CI/badge.svg)
 
-This is the working repository for the COMP 4111 project. The project is a RESTful service on book management system for librarians.
+This is the working repository for the COMP 4111 project. The project is a RESTful service on book management system for librarians. It features a range of book operations and support multiple actions via transactions.
 
 ## How do I get set up?
 
@@ -27,6 +27,8 @@ The project work best with the Intellij IDEA. To import the project in IDEA:
 5. Click clone!
 6. Open the project
 7. Wait for a little bit. IDEA should import the gradle project automatically. ;)
+
+Of course, you can clone the project via command line if you wish so.
 
 ### Running the server
 
@@ -70,3 +72,7 @@ Refer to the following 2 links for more details on the PR workflow:
 ### Who do I talk to?
 
 Please contact the repo owner Tommy LI in case you have any questions. Feel free to have a chat on other misc stuffs too!
+
+## Versioning
+
+The `master` branch is under constant development but is considered stable. If you would like to find the phase 1 submission for the project, please checkout the tag `phase1`.
