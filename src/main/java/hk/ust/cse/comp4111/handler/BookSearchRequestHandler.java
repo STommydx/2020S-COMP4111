@@ -32,9 +32,7 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
         try {
             BookSearchRequest.Builder builder = new BookSearchRequest.Builder();
             if (param.containsKey("id")) {
-                int id = Integer.parseInt(param.get("id"));
-                if (id < 0) throw new NumberFormatException();
-                builder.id(id);
+                builder.id(Integer.parseInt(param.get("id")));
             }
             if (param.containsKey("title")) {
                 builder.title(param.get("title"));
