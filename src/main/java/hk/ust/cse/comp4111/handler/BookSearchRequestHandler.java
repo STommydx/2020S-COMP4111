@@ -59,7 +59,9 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
                 builder.reverseSort();
             }
             if (param.containsKey("limit")) {
-                builder.limit(Integer.parseInt(param.get("limit")));
+                int limit = Integer.parseInt(param.get("limit"));
+                if (limit < 0) throw new NumberFormatException();
+                builder.limit(limit);
             }
             BookSearchResponse searchResponse = BookService.getInstance().searchBook(builder.build());
             if (searchResponse.getTotalNumBooks() == 0) {
