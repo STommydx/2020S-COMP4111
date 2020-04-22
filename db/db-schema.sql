@@ -25,8 +25,8 @@ DELIMITER //
 CREATE PROCEDURE init_user()
 BEGIN
 	DECLARE i INT DEFAULT 1;
-	WHILE i <= 100 DO
-		INSERT into users (username, password) VALUES (CONCAT('user', LPAD(i, 3, '0')), CONCAT('pass', LPAD(i, 3, '0')));
+	WHILE i <= 10000 DO
+		INSERT into users (username, password) VALUES (CONCAT('user', LPAD(i, 5, '0')), CONCAT('pass', LPAD(i, 5, '0')));
 		SET i = i + 1;
 	END WHILE;
 END
