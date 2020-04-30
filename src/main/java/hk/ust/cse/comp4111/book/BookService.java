@@ -20,22 +20,39 @@ public class BookService {
     public BookSearchResponse searchBook(BookSearchRequest request) throws SQLException {
         StringBuilder searchSql = new StringBuilder();
         searchSql.append("SELECT title, author, publisher, year FROM books");
-        if (request.isSearchById() || request.isSearchByTitle() || request.isSearchByAuthor()) {
+        if (request.isSearchById() || request.isSearchByTitle() || request.isSearchByAuthor() || request.isSearchByPublisher() || request.isSearchByYear()) {
+            boolean multiStatement = false;
             searchSql.append(" WHERE");
             if (request.isSearchById()) {
                 searchSql.append(" id=?");
+                multiStatement = true;
             }
             if (request.isSearchByTitle()) {
-                if (request.isSearchById()) {
+                if (multiStatement) {
                     searchSql.append(" AND");
                 }
                 searchSql.append(" INSTR(title, ?) > 0");
+                multiStatement = true;
             }
             if (request.isSearchByAuthor()) {
-                if (request.isSearchById() || request.isSearchByTitle()) {
+                if (multiStatement) {
                     searchSql.append(" AND");
                 }
                 searchSql.append(" INSTR(author, ?) > 0");
+                multiStatement = true;
+            }
+            if (request.isSearchByYear()) {
+                if (multiStatement) {
+                    searchSql.append(" AND");
+                }
+                searchSql.append(" year = ?");
+                multiStatement = true;
+            }
+            if (request.isSearchByPublisher()) {
+                if (multiStatement) {
+                    searchSql.append(" AND");
+                }
+                searchSql.append(" INSTR(publisher, ?) > 0");
             }
         }
         if (request.isSorted()) {
@@ -52,6 +69,9 @@ public class BookService {
                     break;
                 case BY_YEAR:
                     searchSql.append(" year");
+                    break;
+                case BY_PUBLISHER:
+                    searchSql.append(" publisher");
                     break;
             }
             if (request.isSortReversed()) {

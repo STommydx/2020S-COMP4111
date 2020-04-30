@@ -40,6 +40,12 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
             if (param.containsKey("author")) {
                 builder.author(param.get("author"));
             }
+            if (param.containsKey("year")) {
+                builder.year(Integer.parseInt(param.get("year")));
+            }
+            if (param.containsKey("publisher")) {
+                builder.publisher(param.get("publisher"));
+            }
             if (param.containsKey("sortby")) {
                 String sortby = param.get("sortby");
                 if (sortby.equals("id")) {
@@ -53,6 +59,9 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
                 }
                 if (sortby.equals("year")) {
                     builder.sortByYear();
+                }
+                if (sortby.equals("publisher")) {
+                    builder.sortByPublisher();
                 }
             }
             if (param.containsKey("order") && param.get("order").equals("desc")) {

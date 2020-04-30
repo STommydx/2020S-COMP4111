@@ -92,6 +92,12 @@ public class DatabaseBook {
                 if (request.isSearchByAuthor()) {
                     preparedStatement.setString(count++, request.getAuthor());
                 }
+                if (request.isSearchByYear()) {
+                    preparedStatement.setInt(count++, request.getYear());
+                }
+                if (request.isSearchByPublisher()) {
+                    preparedStatement.setString(count++, request.getPublisher());
+                }
                 if (request.isLimited()) {
                     preparedStatement.setInt(count, request.getLimit());
                 }

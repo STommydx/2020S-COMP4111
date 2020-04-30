@@ -4,19 +4,25 @@ public class BookSearchRequest {
     private boolean searchById = false;
     private boolean searchByTitle = false;
     private boolean searchByAuthor = false;
+    private boolean searchByPublisher = false;
+    private boolean searchByYear = false;
     private boolean sorted = false;
     private boolean sortReversed = false;
-    private boolean limited;
+    private boolean limited = false;
 
     private int id;
     private String author;
+
+    private String publisher;
     private String title;
+    private int year;
     private int limit;
     private SortType sortType;
 
     private BookSearchRequest() {
         author = "";
         title = "";
+        publisher = "";
         limit = Integer.MAX_VALUE;
         sortType = SortType.BY_TITLE;
     }
@@ -65,10 +71,28 @@ public class BookSearchRequest {
         return sortType;
     }
 
+    public boolean isSearchByPublisher() {
+        return searchByPublisher;
+    }
+
+    public boolean isSearchByYear() {
+        return searchByYear;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+
     public enum SortType {
         BY_ID,
         BY_TITLE,
         BY_AUTHOR,
+        BY_PUBLISHER,
         BY_YEAR
     }
 
@@ -101,6 +125,18 @@ public class BookSearchRequest {
             return this;
         }
 
+        public Builder publisher(String publisher) {
+            instance.searchByPublisher = true;
+            instance.publisher = publisher;
+            return this;
+        }
+
+        public Builder year(int year) {
+            instance.searchByYear = true;
+            instance.year = year;
+            return this;
+        }
+
         public Builder sortById() {
             instance.sorted = true;
             instance.sortType = SortType.BY_ID;
@@ -116,6 +152,12 @@ public class BookSearchRequest {
         public Builder sortByAuthor() {
             instance.sorted = true;
             instance.sortType = SortType.BY_AUTHOR;
+            return this;
+        }
+
+        public Builder sortByPublisher() {
+            instance.sorted = true;
+            instance.sortType = SortType.BY_PUBLISHER;
             return this;
         }
 
