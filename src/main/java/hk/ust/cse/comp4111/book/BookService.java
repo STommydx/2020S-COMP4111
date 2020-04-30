@@ -63,7 +63,7 @@ public class BookService {
         }
 
         BookSearchResponse.Builder responseBuilder = new BookSearchResponse.Builder();
-        DatabaseBook.searchBookSql(request, searchSql,responseBuilder);
+        DatabaseBook.searchBookSql(request, searchSql, responseBuilder);
 
         return responseBuilder.build();
     }
