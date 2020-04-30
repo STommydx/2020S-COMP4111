@@ -29,13 +29,13 @@ public class BookService {
                 if (request.isSearchById()) {
                     searchSql.append(" AND");
                 }
-                searchSql.append(" title LIKE CONCAT('%',?,'%')");
+                searchSql.append(" INSTR(title, ?) > 0");
             }
             if (request.isSearchByAuthor()) {
                 if (request.isSearchById() || request.isSearchByTitle()) {
                     searchSql.append(" AND");
                 }
-                searchSql.append(" author LIKE CONCAT('%',?,'%')");
+                searchSql.append(" INSTR(author, ?) > 0");
             }
         }
         if (request.isSorted()) {
