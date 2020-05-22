@@ -10,31 +10,26 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DatabaseTransaction {
-    public static boolean commit(@NotNull Connection connection, @NotNull List<Transaction.TransactionAction> actions) throws SQLException {
-        connection.setAutoCommit(false);
-        try (PreparedStatement preparedSelection = connection.prepareStatement("SELECT available FROM books WHERE id = ? FOR UPDATE")) {
-            try (PreparedStatement preparedUpdate = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?")) {
-                for (Transaction.TransactionAction action : actions) {
-                    preparedSelection.setInt(1, action.getBookId());
-                    try (ResultSet resultSet = preparedSelection.executeQuery()) {
-                        if (!resultSet.next()) {
-                            // book not found
-                            connection.rollback();
-                            return false;
-                        }
-                        int isAvailable = resultSet.getInt(1);
-                        if (isAvailable == (action.isAvailable() ? 1 : 0)) {
-                            connection.rollback();
-                            return false;
-                        }
-                    }
-                    preparedUpdate.setInt(1, action.isAvailable() ? 1 : 0);
-                    preparedUpdate.setInt(2, action.getBookId());
-                    preparedUpdate.executeUpdate();
-                }
-            }
-        }
+    public static boolean commit(@NotNull Transaction transaction) throws SQLException {
+        Connection connection = transaction.getConnection();
         connection.commit();
+        return true;
+    }
+
+    public static boolean cancel(@NotNull Transaction transaction) throws SQLException {
+        Connection connection = transaction.getConnection();
+        connection.rollback();
+        return true;
+    }
+
+    public static boolean update(@NotNull Transaction transaction, Transaction.TransactionAction action) throws SQLException {
+        Connection connection = transaction.getConnection();
+        try (PreparedStatement preparedUpdate = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?")) {
+            // no need to check book status according to Canvas Q&A
+            preparedUpdate.setInt(1, action.isAvailable() ? 1 : 0);
+            preparedUpdate.setInt(2, action.getBookId());
+            preparedUpdate.executeUpdate();
+        }
         return true;
     }
 }

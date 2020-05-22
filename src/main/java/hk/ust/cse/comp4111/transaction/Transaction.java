@@ -1,34 +1,36 @@
 package hk.ust.cse.comp4111.transaction;
 
+import hk.ust.cse.comp4111.database.ConnectionManager;
 import hk.ust.cse.comp4111.exception.BadTransactionActionException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-public class Transaction {
+public class Transaction implements AutoCloseable {
     private static int nextAvailableId = 0;
     private final int id;
-    private final List<TransactionAction> actions;
+    private final Connection connection;
 
-    public Transaction() {
+    public Transaction() throws SQLException {
         synchronized (Transaction.class) {
             id = nextAvailableId++;
         }
-        actions = Collections.synchronizedList(new ArrayList<>());
+        connection = ConnectionManager.getConnection();
+        connection.setAutoCommit(false);
     }
 
     public int getId() {
         return id;
     }
 
-    public List<TransactionAction> getActions() {
-        return actions;
+    public Connection getConnection() {
+        return connection;
     }
 
-    public boolean addAction(TransactionActionRequest request) throws BadTransactionActionException {
-        return actions.add(new TransactionAction(request));
+    @Override
+    public void close() throws SQLException {
+        connection.close();
     }
 
     public static class TransactionAction {
