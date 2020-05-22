@@ -4,6 +4,7 @@ import hk.ust.cse.comp4111.book.AddBookRequest;
 import hk.ust.cse.comp4111.book.BookSearchRequest;
 import hk.ust.cse.comp4111.book.BookSearchResponse;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 
 public class DatabaseBook {
 
-    public static int bookExist(Connection connection, String title, String author, String publisher, int year) throws SQLException {
+    public static int bookExist(Connection connection, String title, String author, String publisher, int year) throws SQLException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE title = ? AND author = ? AND publisher = ? AND year = ?")) {
             statement.setString(1, title);
             statement.setString(2, author);
@@ -25,12 +26,17 @@ public class DatabaseBook {
                     return resultSet.getInt(1);
                 }
             }
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1205) {
+                throw new LockWaitTimeoutException();
+            }
+            throw e;
         }
         return -1;
     }
 
 
-    public static boolean curAvailability(Connection connection, int id) throws SQLException, BookNotExistException {
+    public static boolean curAvailability(Connection connection, int id) throws SQLException, BookNotExistException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT id, available FROM books WHERE id = ? FOR UPDATE")) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -39,12 +45,16 @@ public class DatabaseBook {
             } else {
                 throw new BookNotExistException();
             }
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1205) {
+                throw new LockWaitTimeoutException();
+            }
+            throw e;
         }
-
     }
 
 
-    public static boolean addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException {
+    public static boolean addBookRecord(Connection connection, String title, String author, String publisher, int year) throws SQLException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO books (title, author, publisher, year) VALUES (?,?,?,?)")) {
             statement.setString(1, title);
             statement.setString(2, author);
@@ -59,27 +69,40 @@ public class DatabaseBook {
                 // duplicate book found, violates integrity constraint
                 return true;
             }
+            if (e.getErrorCode() == 1205) {
+                throw new LockWaitTimeoutException();
+            }
             throw e;
         }
     }
 
-    public static void updateBookAvailability(@NotNull Connection connection, int id, boolean available) throws SQLException {
+    public static void updateBookAvailability(@NotNull Connection connection, int id, boolean available) throws SQLException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?")) {
             statement.setBoolean(1, available);
             statement.setInt(2, id);
             statement.execute();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1205) {
+                throw new LockWaitTimeoutException();
+            }
+            throw e;
         }
     }
 
-    public static boolean deleteBook(@NotNull Connection connection, int id) throws SQLException {
+    public static boolean deleteBook(@NotNull Connection connection, int id) throws SQLException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM books WHERE id = ?")) {
             statement.setInt(1, id);
             int count = statement.executeUpdate();
             return count > 0;
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1205) {
+                throw new LockWaitTimeoutException();
+            }
+            throw e;
         }
     }
 
-    public static void searchBookSql(BookSearchRequest request, StringBuilder searchSql, BookSearchResponse.Builder responseBuilder) throws SQLException {
+    public static void searchBookSql(BookSearchRequest request, StringBuilder searchSql, BookSearchResponse.Builder responseBuilder) throws SQLException, LockWaitTimeoutException {
         try (Connection connection = ConnectionManager.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(searchSql.toString())) {
                 int count = 1;
@@ -110,6 +133,11 @@ public class DatabaseBook {
                     responseBuilder.addBook(new AddBookRequest(title, author, publisher, year));
                 }
             }
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1205) {
+                throw new LockWaitTimeoutException();
+            }
+            throw e;
         }
     }
 

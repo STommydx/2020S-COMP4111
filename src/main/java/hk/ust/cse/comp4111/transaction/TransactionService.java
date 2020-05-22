@@ -35,7 +35,7 @@ public class TransactionService {
         return transaction;
     }
 
-    public boolean addTransactionAction(@NotNull TransactionActionRequest request) throws BadTransactionIdException, BadTransactionActionException, InternalServerException {
+    public boolean addTransactionAction(@NotNull TransactionActionRequest request) throws BadTransactionIdException, BadTransactionActionException, InternalServerException, LockWaitTimeoutException {
         Transaction transaction = transactionMap.get(request.getTransactionId());
         if (transaction == null) {
             throw new BadTransactionIdException(request.getTransactionId());

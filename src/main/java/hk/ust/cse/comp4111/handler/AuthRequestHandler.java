@@ -2,6 +2,7 @@ package hk.ust.cse.comp4111.handler;
 
 import hk.ust.cse.comp4111.auth.AuthService;
 import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import hk.ust.cse.comp4111.exception.TokenNotFoundException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -21,7 +22,7 @@ public class AuthRequestHandler extends ServerRequestHandler {
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
+    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException, LockWaitTimeoutException {
         String token = param.get("token");
         if (token == null) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);

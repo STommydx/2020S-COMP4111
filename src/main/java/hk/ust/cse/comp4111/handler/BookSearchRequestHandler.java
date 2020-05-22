@@ -7,6 +7,7 @@ import hk.ust.cse.comp4111.book.BookSearchRequest;
 import hk.ust.cse.comp4111.book.BookSearchResponse;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
@@ -24,7 +25,7 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
     private final ObjectWriter objectWriter = objectMapper.writer();
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws InternalServerException {
+    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws InternalServerException, LockWaitTimeoutException {
         if (!httpMethod.equalsIgnoreCase("GET")) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;

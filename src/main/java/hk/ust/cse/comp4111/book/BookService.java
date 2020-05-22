@@ -2,10 +2,7 @@ package hk.ust.cse.comp4111.book;
 
 import hk.ust.cse.comp4111.database.ConnectionManager;
 import hk.ust.cse.comp4111.database.DatabaseBook;
-import hk.ust.cse.comp4111.exception.BookExistException;
-import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
-import hk.ust.cse.comp4111.exception.BookNotExistException;
-import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,7 +14,7 @@ public class BookService {
         return instance;
     }
 
-    public BookSearchResponse searchBook(BookSearchRequest request) throws SQLException {
+    public BookSearchResponse searchBook(BookSearchRequest request) throws SQLException, LockWaitTimeoutException {
         StringBuilder searchSql = new StringBuilder();
         searchSql.append("SELECT title, author, publisher, year FROM books");
         if (request.isSearchById() || request.isSearchByTitle() || request.isSearchByAuthor() || request.isSearchByPublisher() || request.isSearchByYear()) {
@@ -88,7 +85,7 @@ public class BookService {
         return responseBuilder.build();
     }
 
-    public int addBook(AddBookRequest request) throws BookExistException, InternalServerException {
+    public int addBook(AddBookRequest request) throws BookExistException, InternalServerException, LockWaitTimeoutException {
         String title = request.getTitle();
         String author = request.getAuthor();
         String publisher = request.getPublisher();
@@ -108,7 +105,7 @@ public class BookService {
 
     }
 
-    public void putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
+    public void putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException, LockWaitTimeoutException {
         boolean available = request.isAvailable();
         try (Connection connection = ConnectionManager.getConnection()) {
             connection.setAutoCommit(false);
@@ -128,7 +125,7 @@ public class BookService {
         }
     }
 
-    public void deleteBook(int id) throws BookNotExistException, InternalServerException {
+    public void deleteBook(int id) throws BookNotExistException, InternalServerException, LockWaitTimeoutException {
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean bookExist = DatabaseBook.deleteBook(connection, id);
             if (!bookExist) {

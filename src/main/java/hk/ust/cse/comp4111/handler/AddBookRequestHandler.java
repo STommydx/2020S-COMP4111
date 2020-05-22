@@ -4,7 +4,9 @@ import hk.ust.cse.comp4111.book.AddBookRequest;
 import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
-import org.apache.http.*;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -17,7 +19,7 @@ public class AddBookRequestHandler extends JsonRequestHandler<AddBookRequest> {
     }
 
 
-    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull AddBookRequest requestBody, HttpResponse response) throws InternalServerException {
+    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull AddBookRequest requestBody, HttpResponse response) throws InternalServerException, LockWaitTimeoutException {
         if (!httpMethod.equalsIgnoreCase("POST")) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;

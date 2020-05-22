@@ -3,6 +3,7 @@ package hk.ust.cse.comp4111.handler;
 import hk.ust.cse.comp4111.exception.BadTransactionActionException;
 import hk.ust.cse.comp4111.exception.BadTransactionIdException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import hk.ust.cse.comp4111.transaction.TransactionActionRequest;
 import hk.ust.cse.comp4111.transaction.TransactionService;
 import org.apache.http.HttpResponse;
@@ -19,7 +20,7 @@ public class TransactionActionRequestHandler extends JsonRequestHandler<Transact
     }
 
     @Override
-    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull TransactionActionRequest requestBody, HttpResponse response) throws InternalServerException {
+    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull TransactionActionRequest requestBody, HttpResponse response) throws InternalServerException, LockWaitTimeoutException {
         String tokenString = param.get("token");
         if (tokenString == null) throw new InternalServerException(new NullPointerException());
         UUID user = UUID.fromString(tokenString);

@@ -5,6 +5,7 @@ import hk.ust.cse.comp4111.book.BookService;
 import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
 import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,7 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
     }
 
     @Override
-    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull BookPutRequest requestBody, HttpResponse response) throws InternalServerException {
+    public void handleJson(String httpMethod, String path, Map<String, String> param, @NotNull BookPutRequest requestBody, HttpResponse response) throws InternalServerException, LockWaitTimeoutException {
         if (!httpMethod.equalsIgnoreCase("PUT")) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
             return;

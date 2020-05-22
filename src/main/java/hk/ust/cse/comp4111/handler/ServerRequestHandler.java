@@ -1,6 +1,7 @@
 package hk.ust.cse.comp4111.handler;
 
 import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import org.apache.http.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -46,10 +47,11 @@ public abstract class ServerRequestHandler extends BasicRequestHandler {
             e.printStackTrace();
             response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             response.setEntity(new NStringEntity(e.getLocalizedMessage(), ContentType.create("text/plain", "UTF-8")));
+        } catch (LockWaitTimeoutException e) {
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
-
     }
 
-    public abstract void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException;
+    public abstract void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException, LockWaitTimeoutException;
 
 }

@@ -1,13 +1,12 @@
 package hk.ust.cse.comp4111.database;
 
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import hk.ust.cse.comp4111.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public class DatabaseTransaction {
     public static boolean commit(@NotNull Transaction transaction) throws SQLException {
@@ -22,13 +21,18 @@ public class DatabaseTransaction {
         return true;
     }
 
-    public static boolean update(@NotNull Transaction transaction, Transaction.TransactionAction action) throws SQLException {
+    public static boolean update(@NotNull Transaction transaction, Transaction.TransactionAction action) throws SQLException, LockWaitTimeoutException {
         Connection connection = transaction.getConnection();
         try (PreparedStatement preparedUpdate = connection.prepareStatement("UPDATE books SET available = ? WHERE id = ?")) {
             // no need to check book status according to Canvas Q&A
             preparedUpdate.setInt(1, action.isAvailable() ? 1 : 0);
             preparedUpdate.setInt(2, action.getBookId());
             preparedUpdate.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1205) {
+                throw new LockWaitTimeoutException();
+            }
+            throw e;
         }
         return true;
     }

@@ -1,6 +1,7 @@
 package hk.ust.cse.comp4111.handler;
 
 import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +45,7 @@ public class MultiRequestHandler extends ServerRequestHandler {
     }
 
     @Override
-    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException {
+    public void handle(String httpMethod, String path, Map<String, String> param, @Nullable InputStream requestBody, HttpResponse response) throws IOException, InternalServerException, LockWaitTimeoutException {
         if (httpMethod.equalsIgnoreCase("GET") && getRequest != null) {
             getRequest.handle(httpMethod, path, param, requestBody, response);
         } else if (httpMethod.equalsIgnoreCase("POST") && postRequest != null) {
