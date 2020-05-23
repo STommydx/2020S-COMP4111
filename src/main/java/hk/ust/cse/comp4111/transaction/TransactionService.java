@@ -1,14 +1,9 @@
 package hk.ust.cse.comp4111.transaction;
 
-import hk.ust.cse.comp4111.database.ConnectionManager;
 import hk.ust.cse.comp4111.database.DatabaseTransaction;
-import hk.ust.cse.comp4111.exception.BadCommitException;
-import hk.ust.cse.comp4111.exception.BadTransactionActionException;
-import hk.ust.cse.comp4111.exception.BadTransactionIdException;
-import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
@@ -29,32 +24,46 @@ public class TransactionService {
         return transactionServiceMap.get(user);
     }
 
-    public Transaction newTransaction() {
-        Transaction transaction = new Transaction();
+    public Transaction newTransaction() throws NoAvailableTransactionException {
+        Transaction transaction;
+        try {
+            transaction = new Transaction();
+        } catch (SQLException e) {
+            throw new NoAvailableTransactionException();
+        }
         transactionMap.put(transaction.getId(), transaction);
         return transaction;
     }
 
-    public boolean addTransactionAction(@NotNull TransactionActionRequest request) throws BadTransactionIdException, BadTransactionActionException {
+    public boolean addTransactionAction(@NotNull TransactionActionRequest request) throws BadTransactionIdException, BadTransactionActionException, InternalServerException {
         Transaction transaction = transactionMap.get(request.getTransactionId());
         if (transaction == null) {
             throw new BadTransactionIdException(request.getTransactionId());
         }
-        return transaction.addAction(request);
+        try {
+            return DatabaseTransaction.update(transaction, new Transaction.TransactionAction(request));
+        } catch (SQLException e) {
+            throw new InternalServerException(e);
+        }
     }
 
-    public void cancelTransaction(int id) throws BadTransactionIdException {
-        Transaction transaction = transactionMap.remove(id);
-        if (transaction == null) throw new BadTransactionIdException(id);
+    public void cancelTransaction(int id) throws BadTransactionIdException, InternalServerException {
+        try (Transaction transaction = transactionMap.remove(id)) {
+            if (transaction == null) {
+                throw new BadTransactionIdException(id);
+            }
+            DatabaseTransaction.cancel(transaction);
+        } catch (SQLException e) {
+            throw new InternalServerException(e);
+        }
     }
 
     public void commitTransaction(int id) throws InternalServerException, BadTransactionIdException, BadCommitException {
-        Transaction transaction = transactionMap.get(id);
-        if (transaction == null) {
-            throw new BadTransactionIdException(id);
-        }
-        try (Connection connection = ConnectionManager.getConnection()) {
-            boolean result = DatabaseTransaction.commit(connection, transaction.getActions());
+        try (Transaction transaction = transactionMap.remove(id)) {
+            if (transaction == null) {
+                throw new BadTransactionIdException(id);
+            }
+            boolean result = DatabaseTransaction.commit(transaction);
             if (!result) throw new BadCommitException(id);
         } catch (SQLException e) {
             throw new InternalServerException(e);

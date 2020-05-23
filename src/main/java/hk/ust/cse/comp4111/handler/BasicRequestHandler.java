@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 public abstract class BasicRequestHandler implements HttpAsyncRequestHandler<HttpRequest> {
 
-    private static final int NUM_OF_THREADS = 16;
+    private static final int NUM_OF_THREADS = 120;
     private static final ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREADS);
 
     @Override
