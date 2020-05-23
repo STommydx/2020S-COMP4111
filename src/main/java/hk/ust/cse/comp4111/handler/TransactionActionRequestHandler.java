@@ -25,7 +25,11 @@ public class TransactionActionRequestHandler extends JsonRequestHandler<Transact
         UUID user = UUID.fromString(tokenString);
         TransactionService transactionService = TransactionService.getInstance(user);
         try {
-            transactionService.addTransactionAction(requestBody);
+            boolean success = transactionService.addTransactionAction(requestBody);
+            if (!success) {
+                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                return;
+            }
             response.setStatusCode(HttpStatus.SC_OK);
         } catch (BadTransactionIdException | BadTransactionActionException e) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
