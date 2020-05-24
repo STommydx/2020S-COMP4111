@@ -6,16 +6,15 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionManager {
-    private static final String host = "localhost";
-    private static final String username = "comp4111";
-    private static final String password = "comp4111";
+    private static final String HOST = "localhost";
+    private static final String USERNAME = "comp4111";
+    private static final String PASSWORD = "comp4111";
+    private static final String DATABASE_NAME = "comp4111";
 
     public static Connection getConnection() throws SQLException {
-        Connection connection;
         Properties connectionProperties = new Properties();
-        connectionProperties.put("user", username);
-        connectionProperties.put("password", password);
-        connection = DriverManager.getConnection("jdbc:mysql://" + host + "/comp4111", connectionProperties);
-        return connection;
+        connectionProperties.put("user", USERNAME);
+        connectionProperties.put("password", PASSWORD);
+        return DriverManager.getConnection("jdbc:mysql://" + HOST + "/" + DATABASE_NAME, connectionProperties);
     }
 }
