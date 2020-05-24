@@ -16,6 +16,8 @@ The project runs with Java 8. It is recommended to have JDK 8 installed. Higher 
 
 You should have a MySQL server installed in your computer. The server should listen on the default SQL port on localhost. Also, you should setup a user `comp4111` and password `comp4111`. The user should be granted full permission the database `comp4111`. Initialize the database with the schema provided in `db/db-schema.sql`.
 
+If you do not have full access to the MySQL server, you can modify the settings (such as host, username, password and database name) in `src/main/java/hk/ust/cse/comp4111/database/ConnectionManager.java`. If you have changed the database name, modify the first line of `db/db-schema.sql` accordingly.
+
 ### Cloning the project
 
 The project work best with the Intellij IDEA. To import the project in IDEA:
@@ -28,12 +30,12 @@ The project work best with the Intellij IDEA. To import the project in IDEA:
 6. Open the project
 7. Wait for a little bit. IDEA should import the gradle project automatically. ;)
 
-Of course, you can clone the project via command line if you wish so.
+Of course, you can clone the project via the command line if you prefer.
 
 ### Running the server
 
 You can find gradle tasks from the Gradle tab on the rightmost toolbar. The `application -> run` task starts the server.
-The server listens on port 8080 by default, which should be the same as the project specification.
+The server listens on port 8080 by default, which should be the same as the project specification. You can change the port in `src/main/java/hk/ust/cse/comp4111/Main.java` if you want so.
 
 Alternatively, you can run the server in the terminal with the command below:
 
@@ -75,4 +77,4 @@ Please contact the repo owner Tommy LI in case you have any questions. Feel free
 
 ## Versioning
 
-The `master` branch is under constant development but is considered stable. If you would like to find the phase 1 submission for the project, please checkout the tag `phase1`.
+The `master` branch is under constant development but is considered stable. If you would like to find the phase 1/2 submission for the project, please checkout the tag `phase1`/`phase2`.
