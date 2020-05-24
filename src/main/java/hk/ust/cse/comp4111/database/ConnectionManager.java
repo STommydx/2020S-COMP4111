@@ -15,6 +15,6 @@ public class ConnectionManager {
         Properties connectionProperties = new Properties();
         connectionProperties.put("user", USERNAME);
         connectionProperties.put("password", PASSWORD);
-        return DriverManager.getConnection("jdbc:mysql://" + HOST + "/" + DATABASE_NAME, connectionProperties);
+        return DriverManager.getConnection("jdbc:mysql://" + HOST + "/" + DATABASE_NAME + "?useSSL=false", connectionProperties);
     }
 }
