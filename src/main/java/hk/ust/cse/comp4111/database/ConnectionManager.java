@@ -45,8 +45,8 @@ public class ConnectionManager {
 
         @Override
         public void close() throws SQLException {
-            sem.release();
             connection.close();
+            sem.release();
         }
     }
 
