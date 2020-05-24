@@ -1,6 +1,5 @@
 package hk.ust.cse.comp4111.database;
 
-import com.mysql.jdbc.exceptions.MySQLTimeoutException;
 import hk.ust.cse.comp4111.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +32,7 @@ public class DatabaseTransaction {
             preparedUpdate.setInt(2, action.getBookId());
             preparedUpdate.setQueryTimeout(TIMEOUT_VALUE);
             preparedUpdate.executeUpdate();
-        } catch (SQLTimeoutException | MySQLTimeoutException e) {
+        } catch (SQLTimeoutException e) {
             return false;
         }
         return true;

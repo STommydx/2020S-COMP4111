@@ -1,6 +1,5 @@
 package hk.ust.cse.comp4111.database;
 
-import com.mysql.jdbc.exceptions.MySQLTimeoutException;
 import hk.ust.cse.comp4111.book.AddBookRequest;
 import hk.ust.cse.comp4111.book.BookSearchRequest;
 import hk.ust.cse.comp4111.book.BookSearchResponse;
@@ -41,7 +40,7 @@ public class DatabaseBook {
             } else {
                 throw new BookNotExistException();
             }
-        } catch (MySQLTimeoutException | SQLTimeoutException e) {
+        } catch (SQLTimeoutException e) {
             throw new LockWaitTimeoutException();
         }
     }
@@ -80,7 +79,7 @@ public class DatabaseBook {
             statement.setQueryTimeout(TIMEOUT_VALUE);
             int count = statement.executeUpdate();
             return count > 0;
-        } catch (MySQLTimeoutException | SQLTimeoutException e) {
+        } catch (SQLTimeoutException e) {
             throw new LockWaitTimeoutException();
         }
     }
