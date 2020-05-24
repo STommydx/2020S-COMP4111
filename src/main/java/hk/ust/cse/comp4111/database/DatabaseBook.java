@@ -14,7 +14,7 @@ public class DatabaseBook {
 
     public static int TIMEOUT_VALUE = 5;
 
-    public static int bookExist(Connection connection, String title, String author, String publisher, int year) throws SQLException {
+    public static int isBookExist(Connection connection, String title, String author, String publisher, int year) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE title = ? AND author = ? AND publisher = ? AND year = ?")) {
             statement.setString(1, title);
             statement.setString(2, author);
@@ -31,7 +31,7 @@ public class DatabaseBook {
     }
 
 
-    public static boolean curAvailability(Connection connection, int id) throws SQLException, BookNotExistException, LockWaitTimeoutException {
+    public static boolean isBookCurrentlyAvailable(Connection connection, int id) throws SQLException, BookNotExistException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT id, available FROM books WHERE id = ? FOR UPDATE")) {
             statement.setInt(1, id);
             statement.setQueryTimeout(TIMEOUT_VALUE);
@@ -85,7 +85,7 @@ public class DatabaseBook {
         }
     }
 
-    public static void searchBookSql(BookSearchRequest request, StringBuilder searchSql, BookSearchResponse.Builder responseBuilder) throws SQLException {
+    public static void searchBooks(BookSearchRequest request, StringBuilder searchSql, BookSearchResponse.Builder responseBuilder) throws SQLException {
         try (Connection connection = ConnectionManager.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(searchSql.toString())) {
                 int count = 1;

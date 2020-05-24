@@ -80,7 +80,7 @@ public class BookService {
         }
 
         BookSearchResponse.Builder responseBuilder = new BookSearchResponse.Builder();
-        DatabaseBook.searchBookSql(request, searchSql, responseBuilder);
+        DatabaseBook.searchBooks(request, searchSql, responseBuilder);
 
         return responseBuilder.build();
     }
@@ -93,7 +93,7 @@ public class BookService {
 
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean exist = DatabaseBook.addBookRecord(connection, title, author, publisher, year);
-            int id = DatabaseBook.bookExist(connection, title, author, publisher, year); // the two queries is not necessarily required to be atomic
+            int id = DatabaseBook.isBookExist(connection, title, author, publisher, year); // the two queries is not necessarily required to be atomic
             if (exist) {
                 throw new BookExistException(id);
             } else {
@@ -109,7 +109,7 @@ public class BookService {
         boolean available = request.isAvailable();
         try (Connection connection = ConnectionManager.getConnection()) {
             connection.setAutoCommit(false);
-            boolean curAvailability = DatabaseBook.curAvailability(connection, id);
+            boolean curAvailability = DatabaseBook.isBookCurrentlyAvailable(connection, id);
             if (!available && !curAvailability) {
                 connection.rollback();
                 throw new BookInvalidStatusException();
