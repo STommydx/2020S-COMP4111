@@ -10,21 +10,21 @@ import java.sql.SQLException;
 public class Transaction implements AutoCloseable {
     private static int nextAvailableId = 0;
     private final int id;
-    private final Connection connection;
+    private final ConnectionManager.ConnectionInstance connection;
 
-    public Transaction() throws SQLException {
+    public Transaction() throws SQLException, InterruptedException {
         synchronized (Transaction.class) {
             id = nextAvailableId++;
         }
-        connection = ConnectionManager.getConnection();
-        connection.setAutoCommit(false);
+        connection = ConnectionManager.getInstance().getConnectionInstance();
+        connection.getConnection().setAutoCommit(false);
     }
 
     public int getId() {
         return id;
     }
 
-    public Connection getConnection() {
+    public ConnectionManager.ConnectionInstance getConnection() {
         return connection;
     }
 

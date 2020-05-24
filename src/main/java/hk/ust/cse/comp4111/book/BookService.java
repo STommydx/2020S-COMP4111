@@ -14,7 +14,7 @@ public class BookService {
         return instance;
     }
 
-    public BookSearchResponse searchBook(BookSearchRequest request) throws SQLException {
+    public BookSearchResponse searchBook(BookSearchRequest request) throws InternalServerException {
         StringBuilder searchSql = new StringBuilder();
         searchSql.append("SELECT title, author, publisher, year FROM books");
         if (request.isSearchById() || request.isSearchByTitle() || request.isSearchByAuthor() || request.isSearchByPublisher() || request.isSearchByYear()) {
@@ -80,7 +80,13 @@ public class BookService {
         }
 
         BookSearchResponse.Builder responseBuilder = new BookSearchResponse.Builder();
-        DatabaseBook.searchBooks(request, searchSql, responseBuilder);
+
+        try (ConnectionManager.ConnectionInstance connectionInstance = ConnectionManager.getInstance().getConnectionInstance()) {
+            Connection connection = connectionInstance.getConnection();
+            DatabaseBook.searchBooks(connection, request, searchSql, responseBuilder);
+        } catch (SQLException | InterruptedException e) {
+            throw new InternalServerException(e);
+        }
 
         return responseBuilder.build();
     }
@@ -91,7 +97,8 @@ public class BookService {
         String publisher = request.getPublisher();
         int year = request.getYear();
 
-        try (Connection connection = ConnectionManager.getConnection()) {
+        try (ConnectionManager.ConnectionInstance connectionInstance = ConnectionManager.getInstance().getConnectionInstance()) {
+            Connection connection = connectionInstance.getConnection();
             boolean exist = DatabaseBook.addBookRecord(connection, title, author, publisher, year);
             int id = DatabaseBook.isBookExist(connection, title, author, publisher, year); // the two queries is not necessarily required to be atomic
             if (exist) {
@@ -99,7 +106,7 @@ public class BookService {
             } else {
                 return id;
             }
-        } catch (SQLException e) {
+        } catch (SQLException | InterruptedException e) {
             throw new InternalServerException(e);
         }
 
@@ -107,7 +114,8 @@ public class BookService {
 
     public boolean putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
         boolean available = request.isAvailable();
-        try (Connection connection = ConnectionManager.getConnection()) {
+        try (ConnectionManager.ConnectionInstance connectionInstance = ConnectionManager.getInstance().getConnectionInstance()) {
+            Connection connection = connectionInstance.getConnection();
             connection.setAutoCommit(false);
             boolean curAvailability = DatabaseBook.isBookCurrentlyAvailable(connection, id);
             if (!available && !curAvailability) {
@@ -123,13 +131,14 @@ public class BookService {
             }
         } catch (LockWaitTimeoutException e) {
             return false;
-        } catch (SQLException e) {
+        } catch (SQLException | InterruptedException e) {
             throw new InternalServerException(e);
         }
     }
 
     public boolean deleteBook(int id) throws BookNotExistException, InternalServerException {
-        try (Connection connection = ConnectionManager.getConnection()) {
+        try (ConnectionManager.ConnectionInstance connectionInstance = ConnectionManager.getInstance().getConnectionInstance()) {
+            Connection connection = connectionInstance.getConnection();
             boolean bookExist = DatabaseBook.deleteBook(connection, id);
             if (!bookExist) {
                 throw new BookNotExistException();
@@ -137,7 +146,7 @@ public class BookService {
             return true;
         } catch (LockWaitTimeoutException e) {
             return false;
-        } catch (SQLException e) {
+        } catch (SQLException | InterruptedException e) {
             throw new InternalServerException(e);
         }
     }

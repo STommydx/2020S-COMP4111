@@ -79,7 +79,7 @@ public class BookSearchRequestHandler extends ServerRequestHandler {
                 response.setStatusCode(HttpStatus.SC_OK);
                 response.setEntity(new NByteArrayEntity(objectWriter.writeValueAsBytes(searchResponse), ContentType.create("application/json", "UTF-8")));
             }
-        } catch (SQLException | JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new InternalServerException(e);
         } catch (NumberFormatException e) {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);

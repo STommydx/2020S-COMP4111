@@ -32,10 +32,11 @@ public class AuthService {
     public String login(@NotNull LoginRequest request) throws InternalServerException, BadCredentialsException, DuplicateLoginException {
         String username = request.getUsername();
         String password = request.getPassword();
-        try (Connection connection = ConnectionManager.getConnection()) {
+        try (ConnectionManager.ConnectionInstance connectionInstance = ConnectionManager.getInstance().getConnectionInstance()) {
+            Connection connection = connectionInstance.getConnection();
             boolean loginResult = DatabaseUser.authenticate(connection, username, password);
             if (!loginResult) throw new BadCredentialsException(username);
-        } catch (SQLException e) {
+        } catch (SQLException | InterruptedException e) {
             throw new InternalServerException(e);
         }
         UUID uuid = UUID.randomUUID();

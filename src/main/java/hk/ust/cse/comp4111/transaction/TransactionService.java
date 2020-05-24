@@ -28,7 +28,7 @@ public class TransactionService {
         Transaction transaction;
         try {
             transaction = new Transaction();
-        } catch (SQLException e) {
+        } catch (SQLException | InterruptedException e) {
             throw new NoAvailableTransactionException();
         }
         transactionMap.put(transaction.getId(), transaction);
