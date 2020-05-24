@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
+    private static final int LISTEN_PORT = 8080;
+
     public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("Server starting...");
 
@@ -58,7 +60,7 @@ public class Main {
                 .setTcpNoDelay(true)
                 .build();
         final HttpServer server = ServerBootstrap.bootstrap()
-                .setListenerPort(8080)
+                .setListenerPort(LISTEN_PORT)
                 .setHttpProcessor(httpproc)
                 .setIOReactorConfig(socketConfig)
                 .registerHandler("/BookManagementService/login", loginHandler)
@@ -69,7 +71,11 @@ public class Main {
                 .registerHandler("*", defaultHandler)
                 .setExceptionLogger(ExceptionLogger.STD_ERR)
                 .create();
+
         server.start();
+
+        System.out.println("Server listening on port " + LISTEN_PORT + "...");
+
         server.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> server.shutdown(1, TimeUnit.SECONDS)));

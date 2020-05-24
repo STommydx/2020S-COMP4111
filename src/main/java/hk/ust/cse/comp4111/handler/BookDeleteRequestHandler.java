@@ -28,7 +28,11 @@ public class BookDeleteRequestHandler extends ServerRequestHandler {
         String idFromURL = temp[0];
 
         try {
-            BookService.getInstance().deleteBook(Integer.parseInt(idFromURL));
+            boolean success = BookService.getInstance().deleteBook(Integer.parseInt(idFromURL));
+            if (!success) {
+                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                return;
+            }
             response.setStatusCode(HttpStatus.SC_OK);
         } catch (BookNotExistException e) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
