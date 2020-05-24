@@ -1,17 +1,18 @@
 package hk.ust.cse.comp4111.database;
 
+import com.mysql.jdbc.exceptions.MySQLTimeoutException;
 import hk.ust.cse.comp4111.book.AddBookRequest;
 import hk.ust.cse.comp4111.book.BookSearchRequest;
 import hk.ust.cse.comp4111.book.BookSearchResponse;
 import hk.ust.cse.comp4111.exception.BookNotExistException;
+import hk.ust.cse.comp4111.exception.LockWaitTimeoutException;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseBook {
+
+    public static int TIMEOUT_VALUE = 5;
 
     public static int bookExist(Connection connection, String title, String author, String publisher, int year) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE title = ? AND author = ? AND publisher = ? AND year = ?")) {
@@ -30,17 +31,19 @@ public class DatabaseBook {
     }
 
 
-    public static boolean curAvailability(Connection connection, int id) throws SQLException, BookNotExistException {
+    public static boolean curAvailability(Connection connection, int id) throws SQLException, BookNotExistException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("SELECT id, available FROM books WHERE id = ? FOR UPDATE")) {
             statement.setInt(1, id);
+            statement.setQueryTimeout(TIMEOUT_VALUE);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getBoolean(2);
             } else {
                 throw new BookNotExistException();
             }
+        } catch (MySQLTimeoutException | SQLTimeoutException e) {
+            throw new LockWaitTimeoutException();
         }
-
     }
 
 
@@ -71,11 +74,14 @@ public class DatabaseBook {
         }
     }
 
-    public static boolean deleteBook(@NotNull Connection connection, int id) throws SQLException {
+    public static boolean deleteBook(@NotNull Connection connection, int id) throws SQLException, LockWaitTimeoutException {
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM books WHERE id = ?")) {
             statement.setInt(1, id);
+            statement.setQueryTimeout(TIMEOUT_VALUE);
             int count = statement.executeUpdate();
             return count > 0;
+        } catch (MySQLTimeoutException | SQLTimeoutException e) {
+            throw new LockWaitTimeoutException();
         }
     }
 

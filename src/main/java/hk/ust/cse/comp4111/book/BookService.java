@@ -2,10 +2,7 @@ package hk.ust.cse.comp4111.book;
 
 import hk.ust.cse.comp4111.database.ConnectionManager;
 import hk.ust.cse.comp4111.database.DatabaseBook;
-import hk.ust.cse.comp4111.exception.BookExistException;
-import hk.ust.cse.comp4111.exception.BookInvalidStatusException;
-import hk.ust.cse.comp4111.exception.BookNotExistException;
-import hk.ust.cse.comp4111.exception.InternalServerException;
+import hk.ust.cse.comp4111.exception.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -108,7 +105,7 @@ public class BookService {
 
     }
 
-    public void putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
+    public boolean putBook(BookPutRequest request, int id) throws InternalServerException, BookNotExistException, BookInvalidStatusException {
         boolean available = request.isAvailable();
         try (Connection connection = ConnectionManager.getConnection()) {
             connection.setAutoCommit(false);
@@ -122,18 +119,24 @@ public class BookService {
             } else {
                 DatabaseBook.updateBookAvailability(connection, id, available);
                 connection.commit();
+                return true;
             }
+        } catch (LockWaitTimeoutException e) {
+            return false;
         } catch (SQLException e) {
             throw new InternalServerException(e);
         }
     }
 
-    public void deleteBook(int id) throws BookNotExistException, InternalServerException {
+    public boolean deleteBook(int id) throws BookNotExistException, InternalServerException {
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean bookExist = DatabaseBook.deleteBook(connection, id);
             if (!bookExist) {
                 throw new BookNotExistException();
             }
+            return true;
+        } catch (LockWaitTimeoutException e) {
+            return false;
         } catch (SQLException e) {
             throw new InternalServerException(e);
         }

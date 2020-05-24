@@ -29,7 +29,11 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
         String idFromURL = temp[0];
 
         try {
-            BookService.getInstance().putBook(requestBody, Integer.parseInt(idFromURL));
+            boolean success = BookService.getInstance().putBook(requestBody, Integer.parseInt(idFromURL));
+            if (!success) {
+                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                return;
+            }
             response.setStatusCode(HttpStatus.SC_OK);
         } catch (BookNotExistException e) {
             response.setStatusCode(HttpStatus.SC_NOT_FOUND);
