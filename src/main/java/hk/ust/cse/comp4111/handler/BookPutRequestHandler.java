@@ -13,6 +13,8 @@ import java.util.Map;
 
 public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
 
+    private static final String PATH_PREFIX = "/BookManagementService/books/";
+
     public BookPutRequestHandler() {
         super(BookPutRequest.class);
     }
@@ -24,9 +26,12 @@ public class BookPutRequestHandler extends JsonRequestHandler<BookPutRequest> {
             return;
         }
 
-        String[] temp = path.split("/");
-        temp = temp[temp.length - 1].split("\\?");
-        String idFromURL = temp[0];
+        if (!path.startsWith(PATH_PREFIX)) {
+            response.setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        String idFromURL = path.substring(PATH_PREFIX.length());
 
         try {
             boolean success = BookService.getInstance().putBook(requestBody, Integer.parseInt(idFromURL));
