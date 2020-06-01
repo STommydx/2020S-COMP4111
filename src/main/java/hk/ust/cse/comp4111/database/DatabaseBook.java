@@ -14,12 +14,9 @@ public class DatabaseBook {
 
     public static int TIMEOUT_VALUE = 5;
 
-    public static int isBookExist(Connection connection, String title, String author, String publisher, int year) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE title = ? AND author = ? AND publisher = ? AND year = ?")) {
+    public static int isBookExist(Connection connection, String title) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT id FROM books WHERE title = ?")) {
             statement.setString(1, title);
-            statement.setString(2, author);
-            statement.setString(3, publisher);
-            statement.setInt(4, year);
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
