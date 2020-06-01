@@ -93,7 +93,7 @@ public class BookService {
 
         try (Connection connection = ConnectionManager.getConnection()) {
             boolean exist = DatabaseBook.addBookRecord(connection, title, author, publisher, year);
-            int id = DatabaseBook.isBookExist(connection, title, author, publisher, year); // the two queries is not necessarily required to be atomic
+            int id = DatabaseBook.isBookExist(connection, title); // the two queries is not necessarily required to be atomic
             if (exist) {
                 throw new BookExistException(id);
             } else {
