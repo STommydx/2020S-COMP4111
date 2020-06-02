@@ -24,6 +24,10 @@ public class TransactionCommitRequestHandler extends JsonRequestHandler<Transact
         if (tokenString == null) throw new InternalServerException(new NullPointerException());
         UUID user = UUID.fromString(tokenString);
         TransactionService transactionService = TransactionService.getInstance(user);
+        if (requestBody.getAction() == null) {
+            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            return;
+        }
         switch (requestBody.getAction()) {
             case "commit":
                 try {
