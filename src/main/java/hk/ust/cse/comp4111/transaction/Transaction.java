@@ -44,7 +44,9 @@ public class Transaction implements AutoCloseable {
 
         public TransactionAction(@NotNull TransactionActionRequest request) throws BadTransactionActionException {
             this.bookId = request.getBookId();
-            if (request.getAction().equals("loan")) {
+            if (request.getAction() == null) {
+                throw new BadTransactionActionException("null");
+            } else if (request.getAction().equals("loan")) {
                 this.available = false;
             } else if (request.getAction().equals("return")) {
                 this.available = true;
